@@ -69,8 +69,8 @@ function createLineBatches(regl) {
             for (let i = 0; i < numSegments; i++) {
                 const startX = -7.5 + (15 * i / numSegments);
                 const endX = -7.5 + (15 * (i + 1) / numSegments);
-                const startFade = Math.sin((i / numSegments) * Math.PI);
-                const endFade = Math.sin(((i + 1) / numSegments) * Math.PI);
+                const startFade = Math.sin((i / numSegments) * Math.PI / 2);
+                const endFade = Math.sin(((i + 1) / numSegments) * Math.PI / 2);
                 batch.addLine([startX, y, 0], [endX, y, 0], startFade, endFade);
                 
                 if (batch.lines.length / 8 >= batch.maxLines) break;
