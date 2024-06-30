@@ -52,7 +52,8 @@ function createLineBatches(regl) {
             rotation: rotation,
             mode: 'OVER',
             color: [Math.random(), Math.random(), Math.random()],
-            variation: Math.random() * 3 + 1
+            variation: Math.random() * 3 + 1,
+            transparencyRange: [0.2 + Math.random() * 0.3, 0.7 + Math.random() * 0.3] // Random range between [0.2, 0.5] and [0.7, 1.0]
         });
     }
 
@@ -63,7 +64,8 @@ function createLineBatches(regl) {
             config.rotation,
             config.mode,
             config.color,
-            config.variation
+            config.variation,
+            config.transparencyRange
         );
 
         // Add lines to each batch with irregular steps and fading
