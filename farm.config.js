@@ -1,14 +1,21 @@
-module.exports = {
+import { defineConfig } from "@farmfe/core";
+
+export default defineConfig({
+  // Options related to the compilation
   compilation: {
     input: {
-      index: './src/js/app.js'
+      // can be a relative path or an absolute path
+      index: "./index.html",
     },
     output: {
-      path: './dist',
-      publicPath: '/'
-    }
+      path: "./build",
+      publicPath: "/",
+    },
   },
+  // Options related to the dev server
   server: {
-    port: 3000
-  }
-};
+    port: 9000,
+  },
+  // Additional plugins
+  plugins: [],
+});
