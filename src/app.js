@@ -6,11 +6,10 @@ const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
 let lineBatches = [];
 let projectionMatrix, viewMatrix;
-const NUM_BATCHES = 5;
 
 function init() {
     updateViewport();
-    createLineBatches(regl);
+    createLineBatches(regl, 71);
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -37,8 +36,7 @@ function updateViewport() {
     regl.poll();
 }
 
-function createLineBatches(regl) {
-    const modes = ['OVER', 'MULTIPLY', 'ADD', 'SCREEN', 'OVERLAY', 'DARKEN', 'LIGHTEN', 'COLOR_DODGE', 'COLOR_BURN'];
+function createLineBatches(regl, NUM_BATCHES = 5) {
     const batchConfigs = [];
 
     for (let i = 0; i < NUM_BATCHES; i++) {
@@ -50,7 +48,7 @@ function createLineBatches(regl) {
         batchConfigs.push({
             position: [Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1],
             rotation: rotation,
-            mode: modes[Math.floor(Math.random() * modes.length)],
+            mode: 'OVER',
             color: [Math.random(), Math.random(), Math.random()],
             variation: Math.random() * 3 + 1,
             transparencyRange: [0.2 + Math.random() * 0.3, 0.7 + Math.random() * 0.3] // Random range between [0.2, 0.5] and [0.7, 1.0]
