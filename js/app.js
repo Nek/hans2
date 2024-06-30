@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
 let lineBatches = [];
 let projectionMatrix, viewMatrix;
+const NUM_BATCHES = 5;
 
 function init() {
     updateViewport();
@@ -33,13 +34,20 @@ function updateViewport() {
 }
 
 function createLineBatches(regl) {
-    const batchConfigs = [
-        { position: [0, 0, 0], rotation: mat4.rotateX([], mat4.create(), Math.PI / 4), mode: 'OVER', color: [1, 0, 0], variation: 2 },
-        { position: [1, 1, 0], rotation: mat4.rotateY([], mat4.create(), Math.PI / 4), mode: 'MULTIPLY', color: [0, 1, 0], variation: 3 },
-        { position: [-1, -1, 0], rotation: mat4.rotateZ([], mat4.create(), Math.PI / 4), mode: 'ADD', color: [0, 0, 1], variation: 1 }
-    ];
+    const modes = ['OVER', 'MULTIPLY', 'ADD'];
+    const batchConfigs = [];
 
-    batchConfigs.forEach(config => {
+    for (let i = 0; i < NUM_BATCHES; i++) {
+        batchConfigs.push({
+            position: [Math.random() * 2 - 1, Math.random() * 2 - 1, 0],
+            rotation: mat4.rotateX([], mat4.create(), Math.random() * Math.PI * 2),
+            mode: modes[i % modes.length],
+            color: [Math.random(), Math.random(), Math.random()],
+            variation: Math.random() * 3 + 1
+        });
+    }
+
+    batchConfigs.forEach((config, index) => {
         const batch = new LineBatch(
             regl,
             config.position,
