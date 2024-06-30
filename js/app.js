@@ -46,7 +46,7 @@ function createLineBatches(regl) {
         batchConfigs.push({
             position: [Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1],
             rotation: rotation,
-            mode: modes[i % modes.length],
+            mode: 'OVER',
             color: [Math.random(), Math.random(), Math.random()],
             variation: Math.random() * 3 + 1
         });
