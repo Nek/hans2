@@ -61,12 +61,17 @@ function createLineBatches(regl) {
         1
     );
 
-    // Add some example lines to each batch
+    // Add parallel lines to batch1
     for (let i = 0; i < 50; i++) {
+        const y = (i / 50) - 0.5;  // Distribute lines evenly from -0.5 to 0.5
         batch1.addLine(
-            [Math.random() - 0.5, Math.random() - 0.5, 0],
-            [Math.random() - 0.5, Math.random() - 0.5, 0]
+            [-0.5, y, 0],
+            [0.5, y, 0]
         );
+    }
+
+    // Add some example lines to batch2 and batch3
+    for (let i = 0; i < 50; i++) {
         batch2.addLine(
             [Math.random() - 0.5, Math.random() - 0.5, 0],
             [Math.random() - 0.5, Math.random() - 0.5, 0]
