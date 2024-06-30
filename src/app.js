@@ -66,9 +66,17 @@ function createLineBatches(regl, NUM_BATCHES = 5, useParallelPerpendicular = fal
             mat4.rotateZ(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
         } else {
             // Apply random rotation without parallel/perpendicular constraint
-            mat4.rotateX(rotation, rotation, Math.random() * Math.PI * 2);
-            mat4.rotateY(rotation, rotation, Math.random() * Math.PI * 2);
-            mat4.rotateZ(rotation, rotation, Math.random() * Math.PI * 2);
+            // but avoid angles nearly perpendicular to the viewport
+            const maxAngle = Math.PI / 3; // 60 degrees
+            const minAngle = Math.PI / 6; // 30 degrees
+            
+            const rotX = (Math.random() * (maxAngle - minAngle) + minAngle) * (Math.random() < 0.5 ? 1 : -1);
+            const rotY = (Math.random() * (maxAngle - minAngle) + minAngle) * (Math.random() < 0.5 ? 1 : -1);
+            const rotZ = Math.random() * Math.PI * 2; // Full rotation allowed for Z-axis
+            
+            mat4.rotateX(rotation, rotation, rotX);
+            mat4.rotateY(rotation, rotation, rotY);
+            mat4.rotateZ(rotation, rotation, rotZ);
         }
         
         // Calculate grid position
