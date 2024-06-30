@@ -28,8 +28,8 @@ function init() {
 function updateViewport() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    projectionMatrix = mat4.perspective([], Math.PI / 4, window.innerWidth / window.innerHeight, 0.01, 1000);
-    viewMatrix = mat4.lookAt([], [0, 0, 15], [0, 0, 0], [0, 1, 0]);
+    projectionMatrix = mat4.perspective([], Math.PI / 6, window.innerWidth / window.innerHeight, 0.01, 1000);
+    viewMatrix = mat4.lookAt([], [0, 0, 10], [0, 0, 0], [0, 1, 0]);
     regl.poll();
 }
 
