@@ -9,7 +9,7 @@ let projectionMatrix, viewMatrix;
 
 function init() {
     updateViewport();
-    createLineBatches(regl, 71);
+    createLineBatches(regl, 71, false);
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -36,7 +36,7 @@ function updateViewport() {
     regl.poll();
 }
 
-function createLineBatches(regl, NUM_BATCHES = 5) {
+function createLineBatches(regl, NUM_BATCHES = 5, useParallelPerpendicular = false) {
     const batchConfigs = [];
 
     // Create a grid to help distribute batches more evenly
@@ -46,23 +46,30 @@ function createLineBatches(regl, NUM_BATCHES = 5) {
     for (let i = 0; i < NUM_BATCHES; i++) {
         let rotation = mat4.create();
         
-        // Randomly choose between parallel and perpendicular orientations
-        const orientationType = Math.random();
-        if (orientationType < 0.33) {
-            // X-axis aligned
-            mat4.rotateY(rotation, rotation, Math.PI / 2);
-        } else if (orientationType < 0.67) {
-            // Y-axis aligned
-            mat4.rotateX(rotation, rotation, Math.PI / 2);
-        } else {
-            // Z-axis aligned (no rotation needed)
-        }
+        if (useParallelPerpendicular) {
+            // Randomly choose between parallel and perpendicular orientations
+            const orientationType = Math.random();
+            if (orientationType < 0.33) {
+                // X-axis aligned
+                mat4.rotateY(rotation, rotation, Math.PI / 2);
+            } else if (orientationType < 0.67) {
+                // Y-axis aligned
+                mat4.rotateX(rotation, rotation, Math.PI / 2);
+            } else {
+                // Z-axis aligned (no rotation needed)
+            }
 
-        // Add some random rotation to avoid perfect alignment, but limit the angle
-        const maxRotationAngle = Math.PI / 12; // 15 degrees
-        mat4.rotateX(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
-        mat4.rotateY(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
-        mat4.rotateZ(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
+            // Add some random rotation to avoid perfect alignment, but limit the angle
+            const maxRotationAngle = Math.PI / 12; // 15 degrees
+            mat4.rotateX(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
+            mat4.rotateY(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
+            mat4.rotateZ(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
+        } else {
+            // Apply random rotation without parallel/perpendicular constraint
+            mat4.rotateX(rotation, rotation, Math.random() * Math.PI * 2);
+            mat4.rotateY(rotation, rotation, Math.random() * Math.PI * 2);
+            mat4.rotateZ(rotation, rotation, Math.random() * Math.PI * 2);
+        }
         
         // Calculate grid position
         const gridX = i % gridSize;
