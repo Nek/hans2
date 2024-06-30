@@ -62,13 +62,15 @@ function createLineBatches(regl) {
             config.variation
         );
 
-        // Add parallel lines to each batch
-        for (let i = 0; i < 50; i++) {
-            const y = (i / 50) - 0.5;  // Distribute lines evenly from -0.5 to 0.5
+        // Add lines to each batch with irregular steps
+        let y = -0.5;
+        while (y < 0.5) {
             batch.addLine(
-                [-2.5, y, 0],  // Start point x-coordinate changed from -0.5 to -2.5
-                [2.5, y, 0]    // End point x-coordinate changed from 0.5 to 2.5
+                [-2.5, y, 0],
+                [2.5, y, 0]
             );
+            // Add an irregular step
+            y += 0.01 + Math.random() * 0.03;
         }
 
         lineBatches.push(batch);
