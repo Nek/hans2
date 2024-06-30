@@ -1,6 +1,6 @@
 import createREGL from 'regl';
 import { mat4 } from 'gl-matrix';
-import { LineBatch } from './LineBatch';
+import { createLineBatch } from './LineBatch';
 
 const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
@@ -99,7 +99,7 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
     }
 
     batchConfigs.forEach((config, index) => {
-        const batch = new LineBatch(
+        const batch = createLineBatch(
             regl,
             config.position,
             config.rotation,
