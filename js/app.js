@@ -53,8 +53,8 @@ function createLineBatches(regl) {
         for (let i = 0; i < 50; i++) {
             const y = (i / 50) - 0.5;  // Distribute lines evenly from -0.5 to 0.5
             batch.addLine(
-                [-0.5, y, 0],
-                [0.5, y, 0]
+                [-2.5, y, 0],  // Start point x-coordinate changed from -0.5 to -2.5
+                [2.5, y, 0]    // End point x-coordinate changed from 0.5 to 2.5
             );
         }
 
