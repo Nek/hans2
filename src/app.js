@@ -58,10 +58,11 @@ function createLineBatches(regl, NUM_BATCHES = 5) {
             // Z-axis aligned (no rotation needed)
         }
 
-        // Add some random rotation to avoid perfect alignment
-        mat4.rotateX(rotation, rotation, (Math.random() - 0.5) * Math.PI / 6);
-        mat4.rotateY(rotation, rotation, (Math.random() - 0.5) * Math.PI / 6);
-        mat4.rotateZ(rotation, rotation, (Math.random() - 0.5) * Math.PI / 6);
+        // Add some random rotation to avoid perfect alignment, but limit the angle
+        const maxRotationAngle = Math.PI / 12; // 15 degrees
+        mat4.rotateX(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
+        mat4.rotateY(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
+        mat4.rotateZ(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
         
         // Calculate grid position
         const gridX = i % gridSize;
