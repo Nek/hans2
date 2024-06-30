@@ -36,14 +36,14 @@ function updateViewport() {
     regl.poll();
 }
 
-function createLineBatches(regl, NUM_BATCHES = 5, useParallelPerpendicular = false) {
+function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = false) {
     const batchConfigs = [];
 
     // Create a grid to help distribute batches more evenly
-    const gridSize = Math.ceil(Math.sqrt(NUM_BATCHES));
+    const gridSize = Math.ceil(Math.sqrt(num_batches));
     const cellSize = 2 / gridSize;
 
-    for (let i = 0; i < NUM_BATCHES; i++) {
+    for (let i = 0; i < num_batches; i++) {
         let rotation = mat4.create();
         
         if (useParallelPerpendicular) {
