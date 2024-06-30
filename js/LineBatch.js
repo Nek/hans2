@@ -1,42 +1,87 @@
 class LineBatch {
-    constructor(scene, planePosition, projectionMatrix, overlayMode, color, widthVariation) {
-        this.scene = scene;
+    constructor(regl, planePosition, projectionMatrix, overlayMode, color, widthVariation) {
+        this.regl = regl;
         this.planePosition = planePosition;
         this.projectionMatrix = projectionMatrix;
         this.overlayMode = overlayMode;
         this.color = color;
         this.widthVariation = widthVariation;
         this.lines = [];
+
+        this.drawLines = this.regl({
+            frag: `
+                precision mediump float;
+                uniform vec3 color;
+                void main() {
+                    gl_FragColor = vec4(color, 1);
+                }
+            `,
+            vert: `
+                precision mediump float;
+                attribute vec3 position;
+                uniform mat4 projection, view, model;
+                void main() {
+                    gl_Position = projection * view * model * vec4(position, 1);
+                }
+            `,
+            attributes: {
+                position: () => this.regl.buffer(this.lines)
+            },
+            uniforms: {
+                color: () => this.color,
+                model: () => mat4.multiply([], this.projectionMatrix, mat4.fromTranslation([], this.planePosition)),
+                view: regl.prop('view'),
+                projection: regl.prop('projection')
+            },
+            count: () => this.lines.length,
+            primitive: 'lines',
+            blend: this.getBlendingMode()
+        });
     }
 
     addLine(startPoint, endPoint) {
-        const geometry = new THREE.BufferGeometry().setFromPoints([startPoint, endPoint]);
-        const material = new THREE.LineBasicMaterial({
-            color: this.color,
-            linewidth: Math.random() * this.widthVariation + 1,
-            blending: this.getBlendingMode(),
-        });
-        const line = new THREE.Line(geometry, material);
-        line.applyMatrix4(this.projectionMatrix);
-        line.position.add(this.planePosition);
-        this.lines.push(line);
-        this.scene.add(line);
+        this.lines.push(startPoint[0], startPoint[1], startPoint[2]);
+        this.lines.push(endPoint[0], endPoint[1], endPoint[2]);
     }
 
     getBlendingMode() {
         switch (this.overlayMode) {
             case 'OVER':
-                return THREE.NormalBlending;
+                return {
+                    enable: true,
+                    func: {
+                        src: 'src alpha',
+                        dst: 'one minus src alpha'
+                    }
+                };
             case 'MULTIPLY':
-                return THREE.MultiplyBlending;
+                return {
+                    enable: true,
+                    func: {
+                        src: 'zero',
+                        dst: 'src color'
+                    }
+                };
             case 'ADD':
-                return THREE.AdditiveBlending;
+                return {
+                    enable: true,
+                    func: {
+                        src: 'one',
+                        dst: 'one'
+                    }
+                };
             default:
-                return THREE.NormalBlending;
+                return {
+                    enable: true,
+                    func: {
+                        src: 'src alpha',
+                        dst: 'one minus src alpha'
+                    }
+                };
         }
     }
 
-    update() {
-        // Add any update logic here if needed
+    draw(uniforms) {
+        this.drawLines(uniforms);
     }
 }
