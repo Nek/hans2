@@ -29,7 +29,7 @@ function updateViewport() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     projectionMatrix = mat4.perspective([], Math.PI / 4, window.innerWidth / window.innerHeight, 0.01, 1000);
-    viewMatrix = mat4.lookAt([], [0, 0, 5], [0, 0, 0], [0, 1, 0]);
+    viewMatrix = mat4.lookAt([], [0, 0, 15], [0, 0, 0], [0, 1, 0]);
     regl.poll();
 }
 
@@ -66,8 +66,8 @@ function createLineBatches(regl) {
         let y = -0.5;
         while (y < 0.5) {
             batch.addLine(
-                [-2.5, y, 0],
-                [2.5, y, 0]
+                [-7.5, y, 0],  // Start point x-coordinate changed from -2.5 to -7.5
+                [7.5, y, 0]    // End point x-coordinate changed from 2.5 to 7.5
             );
             // Add an irregular step
             y += 0.01 + Math.random() * 0.03;
