@@ -1,8 +1,8 @@
 class LineBatch {
-    constructor(regl, planePosition, projectionMatrix, overlayMode, color, widthVariation) {
+    constructor(regl, planePosition, rotationMatrix, overlayMode, color, widthVariation) {
         this.regl = regl;
         this.planePosition = planePosition;
-        this.projectionMatrix = projectionMatrix;
+        this.rotationMatrix = rotationMatrix;
         this.overlayMode = overlayMode;
         this.color = color;
         this.widthVariation = widthVariation;
@@ -38,7 +38,12 @@ class LineBatch {
             },
             uniforms: {
                 color: () => this.color,
-                model: () => mat4.multiply([], this.projectionMatrix, mat4.fromTranslation([], this.planePosition)),
+                model: () => {
+                    let model = mat4.create();
+                    mat4.translate(model, model, this.planePosition);
+                    mat4.multiply(model, model, this.rotationMatrix);
+                    return model;
+                },
                 view: regl.prop('view'),
                 projection: regl.prop('projection')
             },

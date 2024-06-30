@@ -38,9 +38,14 @@ function createLineBatches(regl) {
     const batchConfigs = [];
 
     for (let i = 0; i < NUM_BATCHES; i++) {
+        let rotation = mat4.create();
+        mat4.rotateX(rotation, rotation, Math.random() * Math.PI * 2);
+        mat4.rotateY(rotation, rotation, Math.random() * Math.PI * 2);
+        mat4.rotateZ(rotation, rotation, Math.random() * Math.PI * 2);
+        
         batchConfigs.push({
-            position: [Math.random() * 2 - 1, Math.random() * 2 - 1, 0],
-            rotation: mat4.rotateX([], mat4.create(), Math.random() * Math.PI * 2),
+            position: [Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1],
+            rotation: rotation,
             mode: modes[i % modes.length],
             color: [Math.random(), Math.random(), Math.random()],
             variation: Math.random() * 3 + 1
