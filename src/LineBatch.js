@@ -12,7 +12,7 @@ export class LineBatch {
         this.lines = [];
         this.maxLines = 10000; // Increase max lines to 10000
         this.buffer = regl.buffer({
-            usage: 'dynamic',
+            usage: 'static',
             type: 'float',
             length: this.maxLines * 10 * 4 // Preallocate space for 10000 lines (10 floats per line: 3 for position, 1 for fade, 1 for transparency)
         });

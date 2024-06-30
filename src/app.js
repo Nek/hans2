@@ -9,7 +9,7 @@ let projectionMatrix, viewMatrix;
 
 function init() {
     updateViewport();
-    createLineBatches(regl, 71, false);
+    createLineBatches(regl, 5, false);
 
     window.addEventListener('resize', onWindowResize, false);
 
