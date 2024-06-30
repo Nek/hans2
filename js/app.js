@@ -33,56 +33,33 @@ function updateViewport() {
 }
 
 function createLineBatches(regl) {
-    // Example: Create three different line batches
-    const batch1 = new LineBatch(
-        regl,
-        [0, 0, 0],
-        mat4.rotateX([], mat4.create(), Math.PI / 4),
-        'OVER',
-        [1, 0, 0],
-        2
-    );
+    const batchConfigs = [
+        { position: [0, 0, 0], rotation: mat4.rotateX([], mat4.create(), Math.PI / 4), mode: 'OVER', color: [1, 0, 0], variation: 2 },
+        { position: [1, 1, 0], rotation: mat4.rotateY([], mat4.create(), Math.PI / 4), mode: 'MULTIPLY', color: [0, 1, 0], variation: 3 },
+        { position: [-1, -1, 0], rotation: mat4.rotateZ([], mat4.create(), Math.PI / 4), mode: 'ADD', color: [0, 0, 1], variation: 1 }
+    ];
 
-    const batch2 = new LineBatch(
-        regl,
-        [1, 1, 0],
-        mat4.rotateY([], mat4.create(), Math.PI / 4),
-        'MULTIPLY',
-        [0, 1, 0],
-        3
-    );
-
-    const batch3 = new LineBatch(
-        regl,
-        [-1, -1, 0],
-        mat4.rotateZ([], mat4.create(), Math.PI / 4),
-        'ADD',
-        [0, 0, 1],
-        1
-    );
-
-    // Add parallel lines to batch1
-    for (let i = 0; i < 50; i++) {
-        const y = (i / 50) - 0.5;  // Distribute lines evenly from -0.5 to 0.5
-        batch1.addLine(
-            [-0.5, y, 0],
-            [0.5, y, 0]
+    batchConfigs.forEach(config => {
+        const batch = new LineBatch(
+            regl,
+            config.position,
+            config.rotation,
+            config.mode,
+            config.color,
+            config.variation
         );
-    }
 
-    // Add some example lines to batch2 and batch3
-    for (let i = 0; i < 50; i++) {
-        batch2.addLine(
-            [Math.random() - 0.5, Math.random() - 0.5, 0],
-            [Math.random() - 0.5, Math.random() - 0.5, 0]
-        );
-        batch3.addLine(
-            [Math.random() - 0.5, Math.random() - 0.5, 0],
-            [Math.random() - 0.5, Math.random() - 0.5, 0]
-        );
-    }
+        // Add parallel lines to each batch
+        for (let i = 0; i < 50; i++) {
+            const y = (i / 50) - 0.5;  // Distribute lines evenly from -0.5 to 0.5
+            batch.addLine(
+                [-0.5, y, 0],
+                [0.5, y, 0]
+            );
+        }
 
-    lineBatches.push(batch1, batch2, batch3);
+        lineBatches.push(batch);
+    });
 }
 
 function onWindowResize() {
