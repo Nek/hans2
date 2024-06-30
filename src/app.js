@@ -67,8 +67,8 @@ function createLineBatches(regl, NUM_BATCHES = 5, useParallelPerpendicular = fal
         } else {
             // Apply random rotation without parallel/perpendicular constraint
             // but avoid angles nearly perpendicular to the viewport
-            const maxAngle = Math.PI / 3; // 60 degrees
-            const minAngle = Math.PI / 6; // 30 degrees
+            const maxAngle = Math.PI / 3 * 1; // 60 degrees
+            const minAngle = 0;//Math.PI / 6; // 30 degrees
             
             const rotX = (Math.random() * (maxAngle - minAngle) + minAngle) * (Math.random() < 0.5 ? 1 : -1);
             const rotY = (Math.random() * (maxAngle - minAngle) + minAngle) * (Math.random() < 0.5 ? 1 : -1);
