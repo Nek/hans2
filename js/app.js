@@ -62,16 +62,24 @@ function createLineBatches(regl) {
             config.variation
         );
 
-        // Add lines to each batch with irregular steps
+        // Add lines to each batch with irregular steps and fading
         let y = -0.5;
+        const numSegments = 50;
         while (y < 0.5) {
-            batch.addLine(
-                [-7.5, y, 0],  // Start point x-coordinate changed from -2.5 to -7.5
-                [7.5, y, 0]    // End point x-coordinate changed from 2.5 to 7.5
-            );
+            for (let i = 0; i < numSegments; i++) {
+                const startX = -7.5 + (15 * i / numSegments);
+                const endX = -7.5 + (15 * (i + 1) / numSegments);
+                const startFade = Math.sin((i / numSegments) * Math.PI);
+                const endFade = Math.sin(((i + 1) / numSegments) * Math.PI);
+                batch.lines.push(
+                    startX, y, 0, startFade,
+                    endX, y, 0, endFade
+                );
+            }
             // Add an irregular step
             y += 0.01 + Math.random() * 0.03;
         }
+        batch.buffer.subdata(batch.lines);
 
         lineBatches.push(batch);
     });

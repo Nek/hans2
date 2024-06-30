@@ -10,30 +10,39 @@ class LineBatch {
         this.buffer = regl.buffer({
             usage: 'dynamic',
             type: 'float',
-            length: 1000 * 6 * 4 // Preallocate space for 1000 lines (6 floats per line)
+            length: 1000 * 8 * 4 // Preallocate space for 1000 lines (8 floats per line: 3 for position, 1 for fade)
         });
 
         this.drawLines = this.regl({
             frag: `
                 precision mediump float;
                 uniform vec3 color;
+                varying float vFade;
                 void main() {
-                    gl_FragColor = vec4(color, 1);
+                    gl_FragColor = vec4(color, vFade);
                 }
             `,
             vert: `
                 precision mediump float;
                 attribute vec3 position;
+                attribute float fade;
                 uniform mat4 projection, view, model;
+                varying float vFade;
                 void main() {
                     gl_Position = projection * view * model * vec4(position, 1);
+                    vFade = fade;
                 }
             `,
             attributes: {
                 position: {
                     buffer: this.buffer,
-                    stride: 12,
+                    stride: 16,
                     offset: 0
+                },
+                fade: {
+                    buffer: this.buffer,
+                    stride: 16,
+                    offset: 12
                 }
             },
             uniforms: {
@@ -55,8 +64,8 @@ class LineBatch {
 
     addLine(startPoint, endPoint) {
         this.lines.push(
-            startPoint[0], startPoint[1], startPoint[2],
-            endPoint[0], endPoint[1], endPoint[2]
+            startPoint[0], startPoint[1], startPoint[2], 0,  // Start point with fade 0
+            endPoint[0], endPoint[1], endPoint[2], 0         // End point with fade 0
         );
         this.buffer.subdata(this.lines);
     }
