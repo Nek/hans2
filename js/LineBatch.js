@@ -7,10 +7,11 @@ class LineBatch {
         this.color = color;
         this.widthVariation = widthVariation;
         this.lines = [];
+        this.maxLines = 10000; // Increase max lines to 10000
         this.buffer = regl.buffer({
             usage: 'dynamic',
             type: 'float',
-            length: 1000 * 8 * 4 // Preallocate space for 1000 lines (8 floats per line: 3 for position, 1 for fade)
+            length: this.maxLines * 8 * 4 // Preallocate space for 10000 lines (8 floats per line: 3 for position, 1 for fade)
         });
 
         this.drawLines = this.regl({
@@ -62,11 +63,16 @@ class LineBatch {
         });
     }
 
-    addLine(startPoint, endPoint) {
-        this.lines.push(
-            startPoint[0], startPoint[1], startPoint[2], 0,  // Start point with fade 0
-            endPoint[0], endPoint[1], endPoint[2], 0         // End point with fade 0
-        );
+    addLine(startPoint, endPoint, startFade, endFade) {
+        if (this.lines.length / 8 < this.maxLines) {
+            this.lines.push(
+                startPoint[0], startPoint[1], startPoint[2], startFade,
+                endPoint[0], endPoint[1], endPoint[2], endFade
+            );
+        }
+    }
+
+    updateBuffer() {
         this.buffer.subdata(this.lines);
     }
 
@@ -109,7 +115,7 @@ class LineBatch {
 
     draw(uniforms) {
         this.drawLines(Object.assign({}, uniforms, {
-            count: this.lines.length / 3
+            count: this.lines.length / 4 // 4 components per vertex (x, y, z, fade)
         }));
     }
 }
