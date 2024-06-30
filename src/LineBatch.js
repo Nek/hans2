@@ -114,6 +114,59 @@ export class LineBatch {
                         dst: 'one'
                     }
                 };
+            case 'SCREEN':
+                return {
+                    enable: true,
+                    func: {
+                        src: 'one',
+                        dst: 'one minus src color'
+                    }
+                };
+            case 'OVERLAY':
+                return {
+                    enable: true,
+                    func: {
+                        src: 'one',
+                        dst: 'one minus src color'
+                    },
+                    equation: 'add'
+                };
+            case 'DARKEN':
+                return {
+                    enable: true,
+                    func: {
+                        src: 'one',
+                        dst: 'one'
+                    },
+                    equation: 'min'
+                };
+            case 'LIGHTEN':
+                return {
+                    enable: true,
+                    func: {
+                        src: 'one',
+                        dst: 'one'
+                    },
+                    equation: 'max'
+                };
+            case 'COLOR_DODGE':
+                return {
+                    enable: true,
+                    func: {
+                        src: 'dst color',
+                        dst: 'one'
+                    },
+                    equation: 'add'
+                };
+            case 'COLOR_BURN':
+                return {
+                    enable: true,
+                    func: {
+                        src: 'one',
+                        dst: 'one minus src color'
+                    },
+                    equation: 'subtract'
+                };
             default:
                 return {
                     enable: true,

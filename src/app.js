@@ -38,7 +38,7 @@ function updateViewport() {
 }
 
 function createLineBatches(regl) {
-    const modes = ['OVER', 'MULTIPLY', 'ADD'];
+    const modes = ['OVER', 'MULTIPLY', 'ADD', 'SCREEN', 'OVERLAY', 'DARKEN', 'LIGHTEN', 'COLOR_DODGE', 'COLOR_BURN'];
     const batchConfigs = [];
 
     for (let i = 0; i < NUM_BATCHES; i++) {
@@ -50,7 +50,7 @@ function createLineBatches(regl) {
         batchConfigs.push({
             position: [Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1],
             rotation: rotation,
-            mode: 'OVER',
+            mode: modes[Math.floor(Math.random() * modes.length)],
             color: [Math.random(), Math.random(), Math.random()],
             variation: Math.random() * 3 + 1,
             transparencyRange: [0.2 + Math.random() * 0.3, 0.7 + Math.random() * 0.3] // Random range between [0.2, 0.5] and [0.7, 1.0]
