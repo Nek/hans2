@@ -39,14 +39,41 @@ function updateViewport() {
 function createLineBatches(regl, NUM_BATCHES = 5) {
     const batchConfigs = [];
 
+    // Create a grid to help distribute batches more evenly
+    const gridSize = Math.ceil(Math.sqrt(NUM_BATCHES));
+    const cellSize = 2 / gridSize;
+
     for (let i = 0; i < NUM_BATCHES; i++) {
         let rotation = mat4.create();
-        mat4.rotateX(rotation, rotation, Math.random() * Math.PI * 2);
-        mat4.rotateY(rotation, rotation, Math.random() * Math.PI * 2);
-        mat4.rotateZ(rotation, rotation, Math.random() * Math.PI * 2);
+        
+        // Randomly choose between parallel and perpendicular orientations
+        const orientationType = Math.random();
+        if (orientationType < 0.33) {
+            // X-axis aligned
+            mat4.rotateY(rotation, rotation, Math.PI / 2);
+        } else if (orientationType < 0.67) {
+            // Y-axis aligned
+            mat4.rotateX(rotation, rotation, Math.PI / 2);
+        } else {
+            // Z-axis aligned (no rotation needed)
+        }
+
+        // Add some random rotation to avoid perfect alignment
+        mat4.rotateX(rotation, rotation, (Math.random() - 0.5) * Math.PI / 6);
+        mat4.rotateY(rotation, rotation, (Math.random() - 0.5) * Math.PI / 6);
+        mat4.rotateZ(rotation, rotation, (Math.random() - 0.5) * Math.PI / 6);
+        
+        // Calculate grid position
+        const gridX = i % gridSize;
+        const gridY = Math.floor(i / gridSize);
+        
+        // Calculate position with some randomness within the grid cell
+        const posX = -1 + cellSize * (gridX + 0.25 + Math.random() * 0.5);
+        const posY = -1 + cellSize * (gridY + 0.25 + Math.random() * 0.5);
+        const posZ = (Math.random() - 0.5) * 2; // Random depth
         
         batchConfigs.push({
-            position: [Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1],
+            position: [posX, posY, posZ],
             rotation: rotation,
             mode: 'OVER',
             color: [Math.random(), Math.random(), Math.random()],
