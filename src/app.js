@@ -71,15 +71,16 @@ function createLineBatches(regl) {
         // Add lines to each batch with irregular steps and fading
         let y = -0.5;
         const numSegments = 50;
-        while (y < 0.5 && batch.lines.length / 8 < batch.maxLines) {
+        while (y < 0.5 && batch.lines.length / 10 < batch.maxLines) {
+            const transparency = config.transparencyRange[0] + Math.random() * (config.transparencyRange[1] - config.transparencyRange[0]);
             for (let i = 0; i < numSegments; i++) {
                 const startX = -7.5 + (15 * i / numSegments);
                 const endX = -7.5 + (15 * (i + 1) / numSegments);
                 const startFade = Math.sin((i / numSegments) * Math.PI);
                 const endFade = Math.sin(((i + 1) / numSegments) * Math.PI);
-                batch.addLine([startX, y, 0], [endX, y, 0], startFade, endFade);
+                batch.addLine([startX, y, 0], [endX, y, 0], startFade, endFade, transparency);
                 
-                if (batch.lines.length / 8 >= batch.maxLines) break;
+                if (batch.lines.length / 10 >= batch.maxLines) break;
             }
             // Add an irregular step
             y += 0.01 + Math.random() * 0.03;

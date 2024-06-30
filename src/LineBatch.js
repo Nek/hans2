@@ -75,9 +75,8 @@ export class LineBatch {
         });
     }
 
-    addLine(startPoint, endPoint, startFade, endFade) {
+    addLine(startPoint, endPoint, startFade, endFade, transparency) {
         if (this.lines.length / 10 < this.maxLines) {
-            const transparency = this.transparencyRange[0] + Math.random() * (this.transparencyRange[1] - this.transparencyRange[0]);
             this.lines.push(
                 startPoint[0], startPoint[1], startPoint[2], startFade, transparency,
                 endPoint[0], endPoint[1], endPoint[2], endFade, transparency
