@@ -1,10 +1,10 @@
-const regl = createREGL({ canvas: document.getElementById('canvas') });
+const canvas = document.getElementById('canvas');
+const regl = createREGL({ canvas: canvas });
 let lineBatches = [];
+let projectionMatrix, viewMatrix;
 
 function init() {
-    const projectionMatrix = mat4.perspective([], Math.PI / 4, window.innerWidth / window.innerHeight, 0.01, 1000);
-    const viewMatrix = mat4.lookAt([], [0, 0, 5], [0, 0, 0], [0, 1, 0]);
-
+    updateViewport();
     createLineBatches(regl);
 
     window.addEventListener('resize', onWindowResize, false);
@@ -22,6 +22,14 @@ function init() {
 
         lineBatches.forEach(batch => batch.draw(uniforms));
     });
+}
+
+function updateViewport() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    projectionMatrix = mat4.perspective([], Math.PI / 4, window.innerWidth / window.innerHeight, 0.01, 1000);
+    viewMatrix = mat4.lookAt([], [0, 0, 5], [0, 0, 0], [0, 1, 0]);
+    regl.poll();
 }
 
 function createLineBatches(regl) {
@@ -73,7 +81,7 @@ function createLineBatches(regl) {
 }
 
 function onWindowResize() {
-    regl.poll();
+    updateViewport();
 }
 
 init();
