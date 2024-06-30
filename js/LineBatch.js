@@ -7,6 +7,11 @@ class LineBatch {
         this.color = color;
         this.widthVariation = widthVariation;
         this.lines = [];
+        this.buffer = regl.buffer({
+            usage: 'dynamic',
+            type: 'float',
+            length: 1000 * 6 * 4 // Preallocate space for 1000 lines (6 floats per line)
+        });
 
         this.drawLines = this.regl({
             frag: `
@@ -25,7 +30,11 @@ class LineBatch {
                 }
             `,
             attributes: {
-                position: () => this.regl.buffer(this.lines)
+                position: {
+                    buffer: this.buffer,
+                    stride: 12,
+                    offset: 0
+                }
             },
             uniforms: {
                 color: () => this.color,
@@ -40,8 +49,11 @@ class LineBatch {
     }
 
     addLine(startPoint, endPoint) {
-        this.lines.push(startPoint[0], startPoint[1], startPoint[2]);
-        this.lines.push(endPoint[0], endPoint[1], endPoint[2]);
+        this.lines.push(
+            startPoint[0], startPoint[1], startPoint[2],
+            endPoint[0], endPoint[1], endPoint[2]
+        );
+        this.buffer.subdata(this.lines);
     }
 
     getBlendingMode() {
@@ -82,6 +94,8 @@ class LineBatch {
     }
 
     draw(uniforms) {
-        this.drawLines(uniforms);
+        this.drawLines(Object.assign({}, uniforms, {
+            count: this.lines.length / 3
+        }));
     }
 }
