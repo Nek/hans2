@@ -1,3 +1,7 @@
+import createREGL from 'regl';
+import { mat4 } from 'gl-matrix';
+import { LineBatch } from './LineBatch';
+
 const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
 let lineBatches = [];

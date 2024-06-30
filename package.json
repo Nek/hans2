@@ -1,0 +1,18 @@
+{
+  "name": "3d-line-batches-regl",
+  "version": "1.0.0",
+  "description": "3D Line Batches with Regl",
+  "main": "src/js/app.js",
+  "scripts": {
+    "dev": "farm dev",
+    "build": "farm build"
+  },
+  "dependencies": {
+    "regl": "^2.1.0",
+    "gl-matrix": "^3.4.3"
+  },
+  "devDependencies": {
+    "@farmfe/cli": "^0.5.0",
+    "@farmfe/core": "^0.5.0"
+  }
+}

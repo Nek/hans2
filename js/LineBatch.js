@@ -1,4 +1,6 @@
-class LineBatch {
+import { mat4 } from 'gl-matrix';
+
+export class LineBatch {
     constructor(regl, planePosition, rotationMatrix, overlayMode, color, widthVariation) {
         this.regl = regl;
         this.planePosition = planePosition;
