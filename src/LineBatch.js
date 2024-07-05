@@ -68,8 +68,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
         },
         uniforms: {
             color: () => color,
-            numLines: () => 50,
-            widthVariation: () => widthVariation,
+            numLines: () => 30,
+            widthVariation: () => 1,
             transparencyRange: () => transparencyRange,
             useSepia: () => useSepia,
             model: () => {
