@@ -1,13 +1,13 @@
-// A simple seeded random number generator
+import seedrandom from 'seedrandom';
+
 export class SeededRandom {
     constructor(seed = 1234) {
-        this.seed = seed;
+        this.rng = seedrandom(seed);
     }
 
     // Generate a random number between 0 and 1
     random() {
-        const x = Math.sin(this.seed++) * 10000;
-        return x - Math.floor(x);
+        return this.rng();
     }
 
     // Generate a random number between min and max
