@@ -1,5 +1,4 @@
 import { mat4 } from 'gl-matrix';
-import { seededRandom } from './seedrandom';
 
 export function createLineBatch(regl, planePosition, rotationMatrix, color, widthVariation, transparencyRange) {
     const quadVertices = [
@@ -22,11 +21,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
             uniform vec2 transparencyRange;
             varying vec2 vUv;
 
-            uniform float randomSeed;
-
-            float seededRandom(vec2 co) {
-                float x = sin(dot(co, vec2(12.9898, 78.233)) + randomSeed) * 43758.5453;
-                return fract(x);
+            float rand(vec2 co) {
+                return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
             }
 
             void main() {
@@ -34,8 +30,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
                 float lineIndex = floor(y);
                 float t = fract(y);
 
-                float lineWidth = 0.5 + widthVariation * seededRandom(vec2(lineIndex, 0.0));
-                float transparency = mix(transparencyRange.x, transparencyRange.y, seededRandom(vec2(lineIndex, 1.0)));
+                float lineWidth = 0.5 + widthVariation * rand(vec2(lineIndex, 0.0));
+                float transparency = mix(transparencyRange.x, transparencyRange.y, rand(vec2(lineIndex, 1.0)));
 
                 float sine = sin(vUv.x * 3.14159 * 2.0);
                 float line = smoothstep(lineWidth, 0.0, abs(sine));
@@ -63,7 +59,6 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
             numLines: () => 50,
             widthVariation: () => widthVariation,
             transparencyRange: () => transparencyRange,
-            randomSeed: () => seededRandom.random() * 1000,
             model: () => {
                 let model = mat4.create();
                 mat4.translate(model, model, planePosition);
