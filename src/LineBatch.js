@@ -33,89 +33,82 @@ function getBlendingMode(overlayMode) {
 }
 
 export function createLineBatch(regl, planePosition, rotationMatrix, overlayMode, color, widthVariation, transparencyRange) {
-    const maxLines = 10000;
-    const lines = [];
-    const buffer = regl.buffer({
-        usage: 'static',
-        type: 'float',
-        length: maxLines * 10 * 4
-    });
+    const quadVertices = [
+        -1, -1,
+        1, -1,
+        1, 1,
+        -1, -1,
+        1, 1,
+        -1, 1
+    ];
 
-    const drawLines = regl({
+    const quadBuffer = regl.buffer(quadVertices);
+
+    const drawQuad = regl({
         frag: `
             precision mediump float;
             uniform vec3 color;
-            varying float vFade;
-            varying float vTransparency;
+            uniform float numLines;
+            uniform float widthVariation;
+            uniform vec2 transparencyRange;
+            varying vec2 vUv;
+
+            float rand(vec2 co) {
+                return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+            }
+
             void main() {
-                gl_FragColor = vec4(color, vFade * vTransparency);
+                float y = vUv.y * numLines;
+                float lineIndex = floor(y);
+                float t = fract(y);
+
+                float lineWidth = 0.5 + widthVariation * rand(vec2(lineIndex, 0.0));
+                float transparency = mix(transparencyRange.x, transparencyRange.y, rand(vec2(lineIndex, 1.0)));
+
+                float sine = sin(vUv.x * 3.14159 * 2.0);
+                float line = smoothstep(lineWidth, 0.0, abs(sine));
+
+                float fade = sin(vUv.x * 3.14159);
+                
+                gl_FragColor = vec4(color, line * fade * transparency);
             }
         `,
         vert: `
             precision mediump float;
-            attribute vec3 position;
-            attribute float fade;
-            attribute float transparency;
+            attribute vec2 position;
             uniform mat4 projection, view, model;
-            varying float vFade;
-            varying float vTransparency;
+            varying vec2 vUv;
             void main() {
-                gl_Position = projection * view * model * vec4(position, 1);
-                vFade = fade;
-                vTransparency = transparency;
+                vUv = position * 0.5 + 0.5;
+                gl_Position = projection * view * model * vec4(position, 0, 1);
             }
         `,
         attributes: {
-            position: {
-                buffer: buffer,
-                stride: 20,
-                offset: 0
-            },
-            fade: {
-                buffer: buffer,
-                stride: 20,
-                offset: 12
-            },
-            transparency: {
-                buffer: buffer,
-                stride: 20,
-                offset: 16
-            }
+            position: quadBuffer
         },
         uniforms: {
             color: () => color,
+            numLines: () => 50,
+            widthVariation: () => widthVariation,
+            transparencyRange: () => transparencyRange,
             model: () => {
                 let model = mat4.create();
                 mat4.translate(model, model, planePosition);
                 mat4.multiply(model, model, rotationMatrix);
+                mat4.scale(model, model, [7.5, 0.5, 1]); // Adjust scale to match previous dimensions
                 return model;
             },
             view: regl.prop('view'),
             projection: regl.prop('projection')
         },
-        count: () => lines.length,
-        primitive: 'lines',
+        count: 6,
+        primitive: 'triangles',
         blend: getBlendingMode(overlayMode)
     });
 
     return {
-        addLine: (startPoint, endPoint, startFade, endFade, transparency) => {
-            if (lines.length / 10 < maxLines) {
-                lines.push(
-                    startPoint[0], startPoint[1], startPoint[2], startFade, transparency,
-                    endPoint[0], endPoint[1], endPoint[2], endFade, transparency
-                );
-            }
-        },
-        updateBuffer: () => {
-            buffer.subdata(lines);
-        },
         draw: (uniforms) => {
-            drawLines(Object.assign({}, uniforms, {
-                count: lines.length / 5
-            }));
-        },
-        lines,
-        maxLines
+            drawQuad(uniforms);
+        }
     };
 }
