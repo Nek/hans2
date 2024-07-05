@@ -1,6 +1,8 @@
 import { mat4 } from 'gl-matrix';
 
-export function createLineBatch(regl, planePosition, rotationMatrix, color, widthVariation, transparencyRange, useSepia) {
+const glsl = v => v
+
+export function createLineBatch(regl, planePosition, rotationMatrix, color, widthVariation, transparencyRange, useSepia = true) {
     const quadVertices = [
         -1, -1,
         1, -1,
@@ -13,7 +15,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
     const quadBuffer = regl.buffer(quadVertices);
 
     const drawQuad = regl({
-        frag: `
+        frag: glsl`
             precision mediump float;
             uniform vec3 color;
             uniform float numLines;
@@ -27,14 +29,11 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
             }
 
             vec3 toSepia(vec3 color) {
-                float r = color.r;
-                float g = color.g;
-                float b = color.b;
-                return vec3(
-                    0.393 * r + 0.769 * g + 0.189 * b,
-                    0.349 * r + 0.686 * g + 0.168 * b,
-                    0.272 * r + 0.534 * g + 0.131 * b
-                );
+                const mat3 mat = mat3(
+                    0.393, 0.769, 0.189,
+                   0.349, 0.686, 0.168,
+                   0.272, 0.534, 0.131);
+                 return color * mat;
             }
 
             void main() {
@@ -54,7 +53,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
                 gl_FragColor = vec4(finalColor, line * fade * transparency);
             }
         `,
-        vert: `
+        vert: glsl`
             precision mediump float;
             attribute vec2 position;
             uniform mat4 projection, view, model;

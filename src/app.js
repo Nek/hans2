@@ -5,8 +5,6 @@ import { createLineBatch } from './LineBatch';
 import seedrandom from 'seedrandom';
 const random = seedrandom("1234");
 
-let useSepia = false; // Add this line to control sepia mode
-
 const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
 let lineBatches = [];
@@ -110,7 +108,7 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
             config.color,
             config.variation,
             config.transparencyRange,
-            useSepia
+            true
         );
 
         lineBatches.push(batch);
