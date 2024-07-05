@@ -3,7 +3,7 @@ import { mat4 } from 'gl-matrix';
 import { createLineBatch } from './LineBatch';
 
 import seedrandom from 'seedrandom';
-const random = seedrandom(Math.random().toString());
+const random = seedrandom("1234");
 
 const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
@@ -96,7 +96,7 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
             rotation: rotation,
             color: [random(), random(), random()],
             variation: random() * 3 + 1,
-            transparencyRange: [0.2 + random() * 0.3, 0.7 + random() * 0.3] // Random range between [0.2, 0.5] and [0.7, 1.0]
+            transparencyRange: [0, 0.25] // Random range between [0.2, 0.5] and [0.7, 1.0]
         });
     }
 
