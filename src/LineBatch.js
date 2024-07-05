@@ -30,10 +30,10 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
 
             vec3 toSepia(vec3 color) {
                 const mat3 mat = mat3(
-                    0.393, 0.769, 0.189,
-                   0.349, 0.686, 0.168,
-                   0.272, 0.534, 0.131);
-                 return color * mat;
+                    0.393, 0.849, 0.189,
+                    0.349, 0.786, 0.168,
+                    0.272, 0.534, 0.131);
+                return clamp(color * mat * 1.1, 0.0, 1.0);
             }
 
             void main() {
