@@ -94,7 +94,6 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
         batchConfigs.push({
             position: [posX, posY, posZ],
             rotation: rotation,
-            mode: 'OVER',
             color: [random(), random(), random()],
             variation: random() * 3 + 1,
             transparencyRange: [0.2 + random() * 0.3, 0.7 + random() * 0.3] // Random range between [0.2, 0.5] and [0.7, 1.0]
