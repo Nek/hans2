@@ -9,28 +9,6 @@ export function createLineBatch(regl, planePosition, rotationMatrix, overlayMode
         length: maxLines * 10 * 4
     });
 
-    function getBlendingMode() {
-        switch (overlayMode) {
-            case 'OVER':
-                return {
-                    enable: true,
-                    func: {
-                        src: 'src alpha',
-                        dst: 'one minus src alpha'
-                    }
-                };
-            // ... (other cases remain the same)
-            default:
-                return {
-                    enable: true,
-                    func: {
-                        src: 'src alpha',
-                        dst: 'one minus src alpha'
-                    }
-                };
-        }
-    }
-
     const drawLines = regl({
         frag: `
             precision mediump float;
