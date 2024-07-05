@@ -32,8 +32,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
 
             vec3 toSepia(vec3 color) {
                 const mat3 mat = mat3(
-                    0.393, 0.969, 0.189,
-                    0.349, 0.886, 0.168,
+                    0.493, 0.969, 0.189,  // Increased red component
+                    0.349, 0.686, 0.168,  // Decreased green component
                     0.172, 0.534, 0.131);
                 return clamp(color * mat * 1.2, 0.0, 1.0);
             }
