@@ -59,10 +59,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
 
                 float fade = sin(vUv.x * 3.14159);
                 
-                vec3 finalColor = color;
-                if (useSepia) {
-                    finalColor = toSepia(finalColor);
-                }
+                vec3 finalColor = toSepia(color);
                 if (useBurnOverlay) {
                     finalColor = burnOverlay(finalColor, vec3(0.8, 0.5, 0.2));
                 }
