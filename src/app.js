@@ -12,7 +12,7 @@ let projectionMatrix, viewMatrix;
 
 function init() {
     updateViewport();
-    createLineBatches(regl, 21, false, 3); // Create 5 groups of batches
+    createLineBatches(regl, 21, 3); // Create 5 groups of batches
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -39,7 +39,7 @@ function updateViewport() {
     regl.poll();
 }
 
-function createLineBatches(regl, num_batches, useParallelPerpendicular, groupsNum) {
+function createLineBatches(regl, num_batches, groupsNum) {
     const batchConfigs = [];
 
     // Create a grid to help distribute batches more evenly
@@ -65,45 +65,25 @@ function createLineBatches(regl, num_batches, useParallelPerpendicular, groupsNu
 
         for (let i = 0; i < batchesInThisGroup; i++) {
             let rotation = mat4.create();
-            
-            if (useParallelPerpendicular) {
-                // Randomly choose between parallel and perpendicular orientations
-                const orientationType = random();
-                if (orientationType < 0.33) {
-                    // X-axis aligned
-                    mat4.rotateY(rotation, rotation, Math.PI / 2);
-                } else if (orientationType < 0.67) {
-                    // Y-axis aligned
-                    mat4.rotateX(rotation, rotation, Math.PI / 2);
-                } else {
-                    // Z-axis aligned (no rotation needed)
-                }
 
-                // Add some random rotation to avoid perfect alignment, but limit the angle
-                const maxRotationAngle = Math.PI / 12; // 15 degrees
-                mat4.rotateX(rotation, rotation, (random() - 0.5) * maxRotationAngle);
-                mat4.rotateY(rotation, rotation, (random() - 0.5) * maxRotationAngle);
-                mat4.rotateZ(rotation, rotation, (random() - 0.5) * maxRotationAngle);
-            } else {
-                // Apply random rotation without parallel/perpendicular constraint
-                // but avoid angles nearly perpendicular to the viewport
-                const maxAngle = Math.PI / 3 * 1; // 60 degrees
-                const minAngle = 0;//Math.PI / 6; // 30 degrees
-                
-                const rotX = (random() * (maxAngle - minAngle) + minAngle) * (random() < 0.5 ? 1 : -1);
-                const rotY = (random() * (maxAngle - minAngle) + minAngle) * (random() < 0.5 ? 1 : -1);
-                const rotZ = random() * Math.PI * 2; // Full rotation allowed for Z-axis
-                
-                mat4.rotateX(rotation, rotation, rotX);
-                mat4.rotateY(rotation, rotation, rotY);
-                mat4.rotateZ(rotation, rotation, rotZ);
-            }
-            
+            // Apply random rotation without parallel/perpendicular constraint
+            // but avoid angles nearly perpendicular to the viewport
+            const maxAngle = Math.PI / 3 * 1; // 60 degrees
+            const minAngle = 0;//Math.PI / 6; // 30 degrees
+
+            const rotX = (random() * (maxAngle - minAngle) + minAngle) * (random() < 0.5 ? 1 : -1);
+            const rotY = (random() * (maxAngle - minAngle) + minAngle) * (random() < 0.5 ? 1 : -1);
+            const rotZ = random() * Math.PI * 2; // Full rotation allowed for Z-axis
+
+            mat4.rotateX(rotation, rotation, rotX);
+            mat4.rotateY(rotation, rotation, rotY);
+            mat4.rotateZ(rotation, rotation, rotZ);
+
             // Calculate position relative to the group's pivot point
             const relativeX = (random() - 0.5) * 2; // Random position between -1 and 1
             const relativeY = (random() - 0.5) * 2;
             const relativeZ = (random() - 0.5) * 2;
-            
+
             batchConfigs.push({
                 position: [group.pivotX + relativeX, group.pivotY + relativeY, group.pivotZ + relativeZ],
                 rotation: rotation,
