@@ -12,7 +12,7 @@ let projectionMatrix, viewMatrix;
 
 function init() {
     updateViewport();
-    createLineBatches(regl, 21, 3); // Create 5 groups of batches
+    createLineBatches(regl, 50, 2); // Create 5 groups of batches
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -51,8 +51,8 @@ function createLineBatches(regl, num_batches, groupsNum) {
     for (let i = 0; i < groupsNum; i++) {
         groups.push({
             pivotX: (random() - 0.5) * 2, // Random pivot point between -1 and 1
-            pivotY: (random() - 0.5) * 2,
-            pivotZ: (random() - 0.5) * 2
+            pivotY: i % 2 > 0 ? 1 : -1,
+            pivotZ: 0,
         });
     }
 
@@ -68,7 +68,7 @@ function createLineBatches(regl, num_batches, groupsNum) {
 
             // Apply random rotation without parallel/perpendicular constraint
             // but avoid angles nearly perpendicular to the viewport
-            const maxAngle = Math.PI / 3 * 1; // 60 degrees
+            const maxAngle = Math.PI / 10 * 1; // 60 degrees
             const minAngle = 0;//Math.PI / 6; // 30 degrees
 
             const rotX = (random() * (maxAngle - minAngle) + minAngle) * (random() < 0.5 ? 1 : -1);
@@ -81,18 +81,15 @@ function createLineBatches(regl, num_batches, groupsNum) {
 
             // Calculate position relative to the group's pivot point
             const relativeX = (random() - 0.5) * 2; // Random position between -1 and 1
-            const relativeY = (random() - 0.5) * 2;
-            const relativeZ = (random() - 0.5) * 2;
-
+            const relativeY = 0;
+            const relativeZ = (random() - 0.5) * 1;
             batchConfigs.push({
                 position: [group.pivotX + relativeX, group.pivotY + relativeY, group.pivotZ + relativeZ],
                 rotation: rotation,
                 color: [random(), random(), random()],
-                lengthVariation: random() * 3 + 1,
+                lengthVariation: 10,
                 widthVariation: random() * 0.5 + 0.5, // Random width variation between 0.5 and 1
-                transparencyRange: [0, 0.25], // Random range between [0.2, 0.5] and [0.7, 1.0]
-                useBurnOverlay: true, // 50% chance of using burn overlay
-                useDivideOverlay: false // 50% chance of using divide overlay
+                transparencyRange: [0, 0.35], // Random range between [0.2, 0.5] and [0.7, 1.0]
             });
         }
     }
