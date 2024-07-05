@@ -12,7 +12,7 @@ let projectionMatrix, viewMatrix;
 
 function init() {
     updateViewport();
-    createLineBatches(regl, 50, false, 5); // Create 5 groups of batches
+    createLineBatches(regl, 21, false, 3); // Create 5 groups of batches
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -39,7 +39,7 @@ function updateViewport() {
     regl.poll();
 }
 
-function createLineBatches(regl, num_batches, useParallelPerpendicular = false, groupsNum = 1) {
+function createLineBatches(regl, num_batches, useParallelPerpendicular, groupsNum) {
     const batchConfigs = [];
 
     // Create a grid to help distribute batches more evenly
