@@ -57,7 +57,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 if (useBurnOverlay) {
                     finalColor = burnOverlay(finalColor, vec3(0.8, 0.5, 0.2));
                 }
-                gl_FragColor = vec4(finalColor, line * fade * transparency);
+                gl_FragColor = vec4(toSepia(finalColor), line * fade * transparency);
             }
         `,
         vert: glsl`
@@ -97,11 +97,16 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             enable: true,
             func: {
               srcRGB: 'src alpha',
-              srcAlpha: 'src alpha',
+              srcAlpha: 1,
               dstRGB: 'one minus src alpha',
-              dstAlpha: 'one minus src alpha',
+              dstAlpha: 1,
             },
+            equation: {
+                rgb: 'add',
+                alpha: 'add'
+              },
           },
+
         depth: {enable: false}
     });
 
