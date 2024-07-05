@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 
 const glsl = v => v
 
-export function createLineBatch(regl, planePosition, rotationMatrix, color, lengthVariation, widthVariation, transparencyRange, useSepia = true, useBurnOverlay = true) {
+export function createLineBatch(regl, planePosition, rotationMatrix, color, lengthVariation, widthVariation, transparencyRange, useSepia = true, useBurnOverlay = true, useDivideOverlay = false) {
     const quadVertices = [
         -1, -1,
         1, -1,
@@ -23,6 +23,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             uniform vec2 transparencyRange;
             uniform bool useSepia;
             uniform bool useBurnOverlay;
+            uniform bool useDivideOverlay;
             varying vec2 vUv;
 
             float rand(vec2 co) {
@@ -39,6 +40,10 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
 
             vec3 burnOverlay(vec3 base, vec3 blend) {
                 return 1.0 - (1.0 - base) / (blend + 0.001);
+            }
+
+            vec3 divideOverlay(vec3 base, vec3 blend) {
+                return base / (blend + 0.001);
             }
 
             void main() {
@@ -60,6 +65,9 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 }
                 if (useBurnOverlay) {
                     finalColor = burnOverlay(finalColor, vec3(0.8, 0.5, 0.2));
+                }
+                if (useDivideOverlay) {
+                    finalColor = divideOverlay(finalColor, vec3(0.8, 0.5, 0.2));
                 }
                 gl_FragColor = vec4(finalColor, line * fade * transparency);
             }
@@ -84,6 +92,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             transparencyRange: () => transparencyRange,
             useSepia: () => useSepia,
             useBurnOverlay: () => useBurnOverlay,
+            useDivideOverlay: () => useDivideOverlay,
             model: () => {
                 let model = mat4.create();
                 mat4.translate(model, model, planePosition);

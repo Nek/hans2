@@ -97,7 +97,9 @@ function createLineBatches(regl, num_batches, useParallelPerpendicular = false) 
             color: [random(), random(), random()],
             lengthVariation: random() * 3 + 1,
             widthVariation: random() * 0.5 + 0.5, // Random width variation between 0.5 and 1
-            transparencyRange: [0, 0.25] // Random range between [0.2, 0.5] and [0.7, 1.0]
+            transparencyRange: [0, 0.25], // Random range between [0.2, 0.5] and [0.7, 1.0]
+            useBurnOverlay: random() < 0.5, // 50% chance of using burn overlay
+            useDivideOverlay: random() < 0.5 // 50% chance of using divide overlay
         });
     }
 
@@ -110,8 +112,9 @@ function createLineBatches(regl, num_batches, useParallelPerpendicular = false) 
             config.lengthVariation,
             config.widthVariation,
             config.transparencyRange,
-            true,
-            true // useBurnOverlay
+            true, // useSepia
+            config.useBurnOverlay,
+            config.useDivideOverlay
         );
 
         lineBatches.push(batch);
