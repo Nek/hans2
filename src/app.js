@@ -12,7 +12,7 @@ let projectionMatrix, viewMatrix;
 
 function init() {
     updateViewport();
-    createLineBatches(regl, 50, false);
+    createLineBatches(regl, 50, false, 5); // Create 5 groups of batches
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -39,12 +39,21 @@ function updateViewport() {
     regl.poll();
 }
 
-function createLineBatches(regl, num_batches, useParallelPerpendicular = false) {
+function createLineBatches(regl, num_batches, useParallelPerpendicular = false, groupsNum = 1) {
     const batchConfigs = [];
 
     // Create a grid to help distribute batches more evenly
     const gridSize = Math.ceil(Math.sqrt(num_batches));
     const cellSize = 2 / gridSize;
+
+    // Create groups with random translations
+    const groups = [];
+    for (let i = 0; i < groupsNum; i++) {
+        groups.push({
+            translationX: (random() - 0.5) * 2, // Random translation between -1 and 1
+            translationY: (random() - 0.5) * 2
+        });
+    }
 
     for (let i = 0; i < num_batches; i++) {
         let rotation = mat4.create();
@@ -90,9 +99,12 @@ function createLineBatches(regl, num_batches, useParallelPerpendicular = false) 
         const posX = -1 + cellSize * (gridX + 0.25 + random() * 0.5);
         const posY = -1 + cellSize * (gridY + 0.25 + random() * 0.5);
         const posZ = (random() - 0.5) * 2; // Random depth
+
+        // Assign to a random group
+        const group = groups[Math.floor(random() * groupsNum)];
         
         batchConfigs.push({
-            position: [posX, posY, posZ],
+            position: [posX + group.translationX, posY + group.translationY, posZ],
             rotation: rotation,
             color: [random(), random(), random()],
             lengthVariation: random() * 3 + 1,
