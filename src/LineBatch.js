@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 
 const glsl = v => v
 
-export function createLineBatch(regl, planePosition, rotationMatrix, color, lengthVariation, widthVariation, transparencyRange, useSepia = true) {
+export function createLineBatch(regl, planePosition, rotationMatrix, color, lengthVariation, widthVariation, transparencyRange, useSepia = true, useBurnOverlay = true) {
     const quadVertices = [
         -1, -1,
         1, -1,
@@ -22,6 +22,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             uniform float lengthVariation;
             uniform vec2 transparencyRange;
             uniform bool useSepia;
+            uniform bool useBurnOverlay;
             varying vec2 vUv;
 
             float rand(vec2 co) {
@@ -34,6 +35,10 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                     0.349, 0.886, 0.168,
                     0.172, 0.534, 0.131);
                 return clamp(color * mat * 1.2, 0.0, 1.0);
+            }
+
+            vec3 burnOverlay(vec3 base, vec3 blend) {
+                return 1.0 - (1.0 - base) / (blend + 0.001);
             }
 
             void main() {
@@ -49,7 +54,13 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
 
                 float fade = sin(vUv.x * 3.14159);
                 
-                vec3 finalColor = useSepia ? toSepia(color) : color;
+                vec3 finalColor = color;
+                if (useSepia) {
+                    finalColor = toSepia(finalColor);
+                }
+                if (useBurnOverlay) {
+                    finalColor = burnOverlay(finalColor, vec3(0.8, 0.5, 0.2));
+                }
                 gl_FragColor = vec4(finalColor, line * fade * transparency);
             }
         `,
@@ -72,6 +83,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             lengthVariation: () => lengthVariation,
             transparencyRange: () => transparencyRange,
             useSepia: () => useSepia,
+            useBurnOverlay: () => useBurnOverlay,
             model: () => {
                 let model = mat4.create();
                 mat4.translate(model, model, planePosition);

@@ -110,7 +110,8 @@ function createLineBatches(regl, num_batches, useParallelPerpendicular = false) 
             config.lengthVariation,
             config.widthVariation,
             config.transparencyRange,
-            true
+            true,
+            true // useBurnOverlay
         );
 
         lineBatches.push(batch);
