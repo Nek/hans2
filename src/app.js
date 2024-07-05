@@ -12,7 +12,7 @@ let projectionMatrix, viewMatrix;
 
 function init() {
     updateViewport();
-    createLineBatches(regl, 50, 2); // Create 5 groups of batches
+    createLineBatches(regl, 123, 3); // Create 5 groups of batches
 
     window.addEventListener('resize', onWindowResize, false);
 
