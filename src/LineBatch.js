@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 
 const glsl = v => v
 
-export function createLineBatch(regl, planePosition, rotationMatrix, color, lengthVariation, transparencyRange, useSepia = true) {
+export function createLineBatch(regl, planePosition, rotationMatrix, color, lengthVariation, widthVariation, transparencyRange, useSepia = true) {
     const quadVertices = [
         -1, -1,
         1, -1,
@@ -76,7 +76,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 let model = mat4.create();
                 mat4.translate(model, model, planePosition);
                 mat4.multiply(model, model, rotationMatrix);
-                mat4.scale(model, model, [3.75, 0.25, 1]); // Reduced width by half
+                mat4.scale(model, model, [3.75, 0.25 * widthVariation, 1]); // Apply width variation
                 return model;
             },
             view: regl.prop('view'),
