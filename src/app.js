@@ -9,6 +9,7 @@ const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
 let lineBatches = [];
 let projectionMatrix, viewMatrix;
+let cameraZPosition = 10; // New variable for camera Z position
 
 function init() {
     updateViewport();
@@ -35,7 +36,7 @@ function updateViewport() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     projectionMatrix = mat4.perspective([], Math.PI / 6, window.innerWidth / window.innerHeight, 0.01, 1000);
-    viewMatrix = mat4.lookAt([], [0, 0, 10], [0, 0, 0], [0, 1, 0]);
+    viewMatrix = mat4.lookAt([], [0, 0, cameraZPosition], [0, 0, 0], [0, 1, 0]);
     regl.poll();
 }
 
