@@ -100,7 +100,7 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
         });
     }
 
-    batchConfigs.forEach((config, index) => {
+    batchConfigs.forEach((config) => {
         const batch = createLineBatch(
             regl,
             config.position,
