@@ -3,7 +3,7 @@ import { mat4 } from 'gl-matrix';
 import { createLineBatch } from './LineBatch';
 
 import seedrandom from 'seedrandom';
-const random = seedrandom("1234");
+const random = seedrandom(Math.random().toString());
 
 const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
@@ -39,7 +39,7 @@ function updateViewport() {
     regl.poll();
 }
 
-function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = false) {
+function createLineBatches(regl, num_batches, useParallelPerpendicular = false) {
     const batchConfigs = [];
 
     // Create a grid to help distribute batches more evenly
