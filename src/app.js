@@ -1,6 +1,7 @@
 import createREGL from 'regl';
 import { mat4 } from 'gl-matrix';
 import { createLineBatch } from './LineBatch';
+import { seededRandom } from './seedrandom';
 
 const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
@@ -48,7 +49,7 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
         
         if (useParallelPerpendicular) {
             // Randomly choose between parallel and perpendicular orientations
-            const orientationType = Math.random();
+            const orientationType = seededRandom.random();
             if (orientationType < 0.33) {
                 // X-axis aligned
                 mat4.rotateY(rotation, rotation, Math.PI / 2);
@@ -61,18 +62,18 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
 
             // Add some random rotation to avoid perfect alignment, but limit the angle
             const maxRotationAngle = Math.PI / 12; // 15 degrees
-            mat4.rotateX(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
-            mat4.rotateY(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
-            mat4.rotateZ(rotation, rotation, (Math.random() - 0.5) * maxRotationAngle);
+            mat4.rotateX(rotation, rotation, (seededRandom.random() - 0.5) * maxRotationAngle);
+            mat4.rotateY(rotation, rotation, (seededRandom.random() - 0.5) * maxRotationAngle);
+            mat4.rotateZ(rotation, rotation, (seededRandom.random() - 0.5) * maxRotationAngle);
         } else {
             // Apply random rotation without parallel/perpendicular constraint
             // but avoid angles nearly perpendicular to the viewport
             const maxAngle = Math.PI / 3 * 1; // 60 degrees
             const minAngle = 0;//Math.PI / 6; // 30 degrees
             
-            const rotX = (Math.random() * (maxAngle - minAngle) + minAngle) * (Math.random() < 0.5 ? 1 : -1);
-            const rotY = (Math.random() * (maxAngle - minAngle) + minAngle) * (Math.random() < 0.5 ? 1 : -1);
-            const rotZ = Math.random() * Math.PI * 2; // Full rotation allowed for Z-axis
+            const rotX = (seededRandom.random() * (maxAngle - minAngle) + minAngle) * (seededRandom.random() < 0.5 ? 1 : -1);
+            const rotY = (seededRandom.random() * (maxAngle - minAngle) + minAngle) * (seededRandom.random() < 0.5 ? 1 : -1);
+            const rotZ = seededRandom.random() * Math.PI * 2; // Full rotation allowed for Z-axis
             
             mat4.rotateX(rotation, rotation, rotX);
             mat4.rotateY(rotation, rotation, rotY);
@@ -84,17 +85,17 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
         const gridY = Math.floor(i / gridSize);
         
         // Calculate position with some randomness within the grid cell
-        const posX = -1 + cellSize * (gridX + 0.25 + Math.random() * 0.5);
-        const posY = -1 + cellSize * (gridY + 0.25 + Math.random() * 0.5);
-        const posZ = (Math.random() - 0.5) * 2; // Random depth
+        const posX = -1 + cellSize * (gridX + 0.25 + seededRandom.random() * 0.5);
+        const posY = -1 + cellSize * (gridY + 0.25 + seededRandom.random() * 0.5);
+        const posZ = (seededRandom.random() - 0.5) * 2; // Random depth
         
         batchConfigs.push({
             position: [posX, posY, posZ],
             rotation: rotation,
             mode: 'OVER',
-            color: [Math.random(), Math.random(), Math.random()],
-            variation: Math.random() * 3 + 1,
-            transparencyRange: [0.2 + Math.random() * 0.3, 0.7 + Math.random() * 0.3] // Random range between [0.2, 0.5] and [0.7, 1.0]
+            color: [seededRandom.random(), seededRandom.random(), seededRandom.random()],
+            variation: seededRandom.random() * 3 + 1,
+            transparencyRange: [0.2 + seededRandom.random() * 0.3, 0.7 + seededRandom.random() * 0.3] // Random range between [0.2, 0.5] and [0.7, 1.0]
         });
     }
 
