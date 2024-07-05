@@ -9,7 +9,7 @@ const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
 let lineBatches = [];
 let projectionMatrix, viewMatrix;
-let cameraZPosition = 5; // New variable for camera Z position
+let cameraZPosition = 15; // New variable for camera Z position
 
 function init() {
     updateViewport();
@@ -89,7 +89,7 @@ function createLineBatches(regl, num_batches, groupsNum) {
                 rotation: rotation,
                 color: [random(), random(), random()],
                 lengthVariation: 10,
-                widthVariation: random() * 0.5 + 0.5, // Random width variation between 0.5 and 1
+                widthVariation: random() * 0.5 + 1.1, // Random width variation between 0.5 and 1
                 transparencyRange: [0, 0.35], // Random range between [0.2, 0.5] and [0.7, 1.0]
             });
         }
