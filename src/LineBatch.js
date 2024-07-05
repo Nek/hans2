@@ -1,5 +1,37 @@
 import { mat4 } from 'gl-matrix';
 
+function getBlendingMode(overlayMode) {
+    if (overlayMode === 'OVER') {
+        return {
+            enable: true,
+            func: {
+                srcRGB: 'src alpha',
+                srcAlpha: 1,
+                dstRGB: 'one minus src alpha',
+                dstAlpha: 1
+            },
+            equation: {
+                rgb: 'add',
+                alpha: 'add'
+            }
+        };
+    } else {
+        return {
+            enable: true,
+            func: {
+                srcRGB: 'src alpha',
+                srcAlpha: 1,
+                dstRGB: 'one',
+                dstAlpha: 1
+            },
+            equation: {
+                rgb: 'add',
+                alpha: 'add'
+            }
+        };
+    }
+}
+
 export function createLineBatch(regl, planePosition, rotationMatrix, overlayMode, color, widthVariation, transparencyRange) {
     const maxLines = 10000;
     const lines = [];
@@ -63,7 +95,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, overlayMode
         },
         count: () => lines.length,
         primitive: 'lines',
-        blend: getBlendingMode()
+        blend: getBlendingMode(overlayMode)
     });
 
     return {
