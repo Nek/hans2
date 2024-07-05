@@ -44,8 +44,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 float lineLength = 0.5 + lengthVariation * rand(vec2(lineIndex, 0.0));
                 float transparency = mix(transparencyRange.x, transparencyRange.y, rand(vec2(lineIndex, 1.0)));
 
-                float sine = sin(vUv.x * 3.14159 * 2.0 * lineLength);
-                float line = smoothstep(0.5, 0.0, abs(sine));
+                float sine = sin(vUv.x * 3.14159 * 2.0);
+                float line = smoothstep(lineLength, 0.0, abs(sine));
 
                 float fade = sin(vUv.x * 3.14159);
                 
