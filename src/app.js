@@ -9,7 +9,7 @@ const canvas = document.getElementById('canvas');
 const regl = createREGL({ canvas: canvas });
 let lineBatches = [];
 let projectionMatrix, viewMatrix;
-let cameraZPosition = 10; // New variable for camera Z position
+let cameraZPosition = 5; // New variable for camera Z position
 
 function init() {
     updateViewport();
