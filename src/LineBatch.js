@@ -1,6 +1,6 @@
 import { mat4 } from 'gl-matrix';
 
-export function createLineBatch(regl, planePosition, rotationMatrix, overlayMode, color, widthVariation, transparencyRange) {
+export function createLineBatch(regl, planePosition, rotationMatrix, color, widthVariation, transparencyRange) {
     const quadVertices = [
         -1, -1,
         1, -1,

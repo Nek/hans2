@@ -103,7 +103,6 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
             regl,
             config.position,
             config.rotation,
-            config.mode,
             config.color,
             config.variation,
             config.transparencyRange
