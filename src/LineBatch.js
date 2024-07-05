@@ -95,7 +95,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, overlayMode
                 let model = mat4.create();
                 mat4.translate(model, model, planePosition);
                 mat4.multiply(model, model, rotationMatrix);
-                mat4.scale(model, model, [7.5, 0.5, 1]); // Adjust scale to match previous dimensions
+                mat4.scale(model, model, [3.75, 0.25, 1]); // Reduced width by half
                 return model;
             },
             view: regl.prop('view'),
