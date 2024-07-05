@@ -94,7 +94,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 let model = mat4.create();
                 mat4.translate(model, model, planePosition);
                 mat4.multiply(model, model, rotationMatrix);
-                mat4.scale(model, model, [3.75, 0.75 * widthVariation, 1]); // Apply width variation (3x wider)
+                mat4.scale(model, model, [3.75, 0.25 * widthVariation, 1]); // Apply width variation (thinner lines)
                 return model;
             },
             view: regl.prop('view'),
