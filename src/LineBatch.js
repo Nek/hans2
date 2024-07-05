@@ -42,10 +42,6 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 return 1.0 - (1.0 - base) / (blend + 0.001);
             }
 
-            vec3 divideOverlay(vec3 base, vec3 blend) {
-                return base / (blend + 0.001);
-            }
-
             void main() {
                 float y = vUv.y * numLines;
                 float lineIndex = floor(y);
@@ -59,12 +55,9 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
 
                 float fade = sin(vUv.x * 3.14159);
                 
-                vec3 finalColor = toSepia(color);
+                vec3 finalColor = useSepia ? toSepia(color) : color;
                 if (useBurnOverlay) {
                     finalColor = burnOverlay(finalColor, vec3(0.8, 0.5, 0.2));
-                }
-                if (useDivideOverlay) {
-                    finalColor = divideOverlay(finalColor, vec3(0.8, 0.5, 0.2));
                 }
                 gl_FragColor = vec4(finalColor, line * fade * transparency);
             }
