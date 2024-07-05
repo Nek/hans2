@@ -46,12 +46,13 @@ function createLineBatches(regl, num_batches, useParallelPerpendicular, groupsNu
     const gridSize = Math.ceil(Math.sqrt(num_batches));
     const cellSize = 2 / gridSize;
 
-    // Create groups with random translations
+    // Create groups with random pivot points
     const groups = [];
     for (let i = 0; i < groupsNum; i++) {
         groups.push({
-            translationX: (random() - 0.5) * 2, // Random translation between -1 and 1
-            translationY: (random() - 0.5) * 2
+            pivotX: (random() - 0.5) * 2, // Random pivot point between -1 and 1
+            pivotY: (random() - 0.5) * 2,
+            pivotZ: (random() - 0.5) * 2
         });
     }
 
@@ -91,20 +92,16 @@ function createLineBatches(regl, num_batches, useParallelPerpendicular, groupsNu
             mat4.rotateZ(rotation, rotation, rotZ);
         }
         
-        // Calculate grid position
-        const gridX = i % gridSize;
-        const gridY = Math.floor(i / gridSize);
-        
-        // Calculate position with some randomness within the grid cell
-        const posX = -1 + cellSize * (gridX + 0.25 + random() * 0.5);
-        const posY = -1 + cellSize * (gridY + 0.25 + random() * 0.5);
-        const posZ = (random() - 0.5) * 2; // Random depth
-
         // Assign to a random group
         const group = groups[Math.floor(random() * groupsNum)];
         
+        // Calculate position relative to the group's pivot point
+        const relativeX = (random() - 0.5) * 2; // Random position between -1 and 1
+        const relativeY = (random() - 0.5) * 2;
+        const relativeZ = (random() - 0.5) * 2;
+        
         batchConfigs.push({
-            position: [posX + group.translationX, posY + group.translationY, posZ],
+            position: [group.pivotX + relativeX, group.pivotY + relativeY, group.pivotZ + relativeZ],
             rotation: rotation,
             color: [random(), random(), random()],
             lengthVariation: random() * 3 + 1,
