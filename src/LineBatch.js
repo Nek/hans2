@@ -103,7 +103,16 @@ export function createLineBatch(regl, planePosition, rotationMatrix, overlayMode
         },
         count: 6,
         primitive: 'triangles',
-        blend: getBlendingMode(overlayMode)
+        blend: {
+            enable: true,
+            func: {
+              srcRGB: 'src alpha',
+              srcAlpha: 'src alpha',
+              dstRGB: 'one minus src alpha',
+              dstAlpha: 'one minus src alpha',
+            },
+          },
+        depth: {enable: false}
     });
 
     return {
