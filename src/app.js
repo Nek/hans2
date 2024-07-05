@@ -95,7 +95,7 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
             position: [posX, posY, posZ],
             rotation: rotation,
             color: [random(), random(), random()],
-            variation: random() * 3 + 1,
+            lengthVariation: random() * 3 + 1,
             transparencyRange: [0, 0.25] // Random range between [0.2, 0.5] and [0.7, 1.0]
         });
     }
@@ -106,7 +106,7 @@ function createLineBatches(regl, num_batches = 5, useParallelPerpendicular = fal
             config.position,
             config.rotation,
             config.color,
-            config.variation,
+            config.lengthVariation,
             config.transparencyRange,
             true
         );

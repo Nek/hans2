@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 
 const glsl = v => v
 
-export function createLineBatch(regl, planePosition, rotationMatrix, color, widthVariation, transparencyRange, useSepia = true) {
+export function createLineBatch(regl, planePosition, rotationMatrix, color, lengthVariation, transparencyRange, useSepia = true) {
     const quadVertices = [
         -1, -1,
         1, -1,
@@ -19,7 +19,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
             precision mediump float;
             uniform vec3 color;
             uniform float numLines;
-            uniform float widthVariation;
+            uniform float lengthVariation;
             uniform vec2 transparencyRange;
             uniform bool useSepia;
             varying vec2 vUv;
@@ -41,11 +41,11 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
                 float lineIndex = floor(y);
                 float t = fract(y);
 
-                float lineWidth = 0.5 + widthVariation * rand(vec2(lineIndex, 0.0));
+                float lineLength = 0.5 + lengthVariation * rand(vec2(lineIndex, 0.0));
                 float transparency = mix(transparencyRange.x, transparencyRange.y, rand(vec2(lineIndex, 1.0)));
 
-                float sine = sin(vUv.x * 3.14159 * 2.0);
-                float line = smoothstep(lineWidth, 0.0, abs(sine));
+                float sine = sin(vUv.x * 3.14159 * 2.0 * lineLength);
+                float line = smoothstep(0.5, 0.0, abs(sine));
 
                 float fade = sin(vUv.x * 3.14159);
                 
@@ -69,7 +69,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
         uniforms: {
             color: () => color,
             numLines: () => 30,
-            widthVariation: () => 1,
+            lengthVariation: () => lengthVariation,
             transparencyRange: () => transparencyRange,
             useSepia: () => useSepia,
             model: () => {
