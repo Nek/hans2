@@ -1,6 +1,6 @@
 import { mat4 } from 'gl-matrix';
 
-export function createLineBatch(regl, planePosition, rotationMatrix, color, widthVariation, transparencyRange) {
+export function createLineBatch(regl, planePosition, rotationMatrix, color, widthVariation, transparencyRange, useSepia) {
     const quadVertices = [
         -1, -1,
         1, -1,
@@ -19,10 +19,22 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
             uniform float numLines;
             uniform float widthVariation;
             uniform vec2 transparencyRange;
+            uniform bool useSepia;
             varying vec2 vUv;
 
             float rand(vec2 co) {
                 return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+            }
+
+            vec3 toSepia(vec3 color) {
+                float r = color.r;
+                float g = color.g;
+                float b = color.b;
+                return vec3(
+                    0.393 * r + 0.769 * g + 0.189 * b,
+                    0.349 * r + 0.686 * g + 0.168 * b,
+                    0.272 * r + 0.534 * g + 0.131 * b
+                );
             }
 
             void main() {
@@ -38,7 +50,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
 
                 float fade = sin(vUv.x * 3.14159);
                 
-                gl_FragColor = vec4(color, line * fade * transparency);
+                vec3 finalColor = useSepia ? toSepia(color) : color;
+                gl_FragColor = vec4(finalColor, line * fade * transparency);
             }
         `,
         vert: `
@@ -59,6 +72,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, widt
             numLines: () => 50,
             widthVariation: () => widthVariation,
             transparencyRange: () => transparencyRange,
+            useSepia: () => useSepia,
             model: () => {
                 let model = mat4.create();
                 mat4.translate(model, model, planePosition);
