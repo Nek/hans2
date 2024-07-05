@@ -7,8 +7,6 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
         -1, -1,
         1, -1,
         1, 1,
-        -1, -1,
-        1, 1,
         -1, 1
     ];
 
@@ -93,8 +91,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             view: regl.prop('view'),
             projection: regl.prop('projection')
         },
-        count: 6,
-        primitive: 'triangles',
+        count: 4,
+        primitive: 'triangle fan',
         blend: {
             enable: true,
             func: {
