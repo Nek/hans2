@@ -17,15 +17,20 @@ function init() {
 
     window.addEventListener('resize', onWindowResize, false);
 
+    let startTime = Date.now();
+
     regl.frame(() => {
         regl.clear({
             color: [0, 0, 0, 1],
             depth: 1
         });
 
+        const currentTime = (Date.now() - startTime) / 1000; // Convert to seconds
+
         const uniforms = {
             view: viewMatrix,
-            projection: projectionMatrix
+            projection: projectionMatrix,
+            time: currentTime
         };
 
         lineBatches.forEach(batch => batch.draw(uniforms));

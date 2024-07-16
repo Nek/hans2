@@ -22,6 +22,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             uniform bool useSepia;
             uniform bool useBurnOverlay;
             uniform bool useDivideOverlay;
+            uniform float time;
             varying vec2 vUv;
 
             float rand(vec2 co) {
@@ -48,7 +49,9 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 float lineLength = 0.5 + lengthVariation * rand(vec2(lineIndex, 0.0));
                 float transparency = mix(transparencyRange.x, transparencyRange.y, rand(vec2(lineIndex, 1.0)));
 
-                float sine = sin(vUv.x * 3.14159 * 2.0);
+                // Animate the phase of the sine wave based on time and line index
+                float phaseOffset = sin(time * 0.5 + lineIndex * 0.1) * 2.0;
+                float sine = sin((vUv.x + phaseOffset) * 3.14159 * 2.0);
                 float line = smoothstep(lineLength, 0.5, abs(sine));
 
                 float fade = sin(vUv.x * 3.14159);
@@ -89,7 +92,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 return model;
             },
             view: regl.prop('view'),
-            projection: regl.prop('projection')
+            projection: regl.prop('projection'),
+            time: regl.prop('time')
         },
         count: 4,
         primitive: 'triangle fan',
