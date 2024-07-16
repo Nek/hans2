@@ -68,10 +68,13 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             precision mediump float;
             attribute vec2 position;
             uniform mat4 projection, view, model;
+            uniform float time;
             varying vec2 vUv;
             void main() {
                 vUv = position * 0.5 + 0.5;
-                gl_Position = projection * view * model * vec4(position, 0, 1);
+                float widthAnimation = sin(time * 0.5) * 0.2 + 1.0; // Oscillate between 0.8 and 1.2
+                vec4 pos = vec4(position.x * widthAnimation, position.y, 0, 1);
+                gl_Position = projection * view * model * pos;
             }
         `,
         attributes: {
