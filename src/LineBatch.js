@@ -51,11 +51,11 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
 
                 // Animate the phase of the sine wave based on time and line index
                 float cycleTime = mod(time, 60.0); // Create a 60-second cycle
-                float phaseOffset = (cycleTime * 0.1667 + lineIndex * 0.0333) * 2.0; // Removed sin, always moves in one direction
-                float sine = sin((vUv.x + phaseOffset) * 3.14159 * 2.0);
-                float line = smoothstep(lineLength, 0.5, abs(sine));
+                float phaseOffset = (cycleTime * 0.1667 + lineIndex * 0.0333) * 2.0;
+                float sine = sin((vUv.y + phaseOffset) * 3.14159 * 2.0); // Changed to vUv.y for perpendicular animation
+                float line = smoothstep(0.0, 0.1, abs(sine)); // Adjusted for sharper lines
 
-                float fade = sin(vUv.x * 3.14159);
+                float fade = sin(vUv.x * 3.14159); // Keep fade based on vUv.x for horizontal fading
                 
                 vec3 finalColor = useSepia ? toSepia(color) : color;
                 if (useBurnOverlay) {
