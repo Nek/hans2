@@ -50,7 +50,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 float transparency = mix(transparencyRange.x, transparencyRange.y, rand(vec2(lineIndex, 1.0)));
 
                 // Animate the phase of the sine wave based on time and line index
-                float phaseOffset = sin(time * 0.1667 + lineIndex * 0.0333) * 2.0; // Slowed down by a factor of 3
+                float cycleTime = mod(time, 60.0); // Create a 60-second cycle
+                float phaseOffset = (cycleTime * 0.1667 + lineIndex * 0.0333) * 2.0; // Removed sin, always moves in one direction
                 float sine = sin((vUv.x + phaseOffset) * 3.14159 * 2.0);
                 float line = smoothstep(lineLength, 0.5, abs(sine));
 
