@@ -6,7 +6,13 @@ import seedrandom from 'seedrandom';
 const random = seedrandom(Math.random().toString());
 
 const canvas = document.getElementById('canvas');
-const regl = createREGL({ canvas: canvas });
+const regl = createREGL({ 
+    canvas: canvas,
+    attributes: {
+        antialias: true,
+        samples: 4  // This enables 2x MSAA (4 samples)
+    }
+});
 let lineBatches = [];
 let projectionMatrix, viewMatrix;
 let cameraZPosition = 15; // New variable for camera Z position
