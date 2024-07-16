@@ -13,7 +13,7 @@ let cameraZPosition = 15; // New variable for camera Z position
 
 function init() {
     updateViewport();
-    createLineBatches(regl, 5, 2); // Create 5 groups of batches
+    createLineBatches(regl, 15, 3); // Create 5 groups of batches
 
     window.addEventListener('resize', onWindowResize, false);
 
