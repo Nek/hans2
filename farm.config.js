@@ -4,7 +4,9 @@ import react from '@farmfe/plugin-react'
 
 export default defineConfig({
   plugins: [
-    react({ runtime: 'automatic', refresh: true})
+    react({
+      refresh: false
+    })
   ],
   // Options related to the compilation
   compilation: {
@@ -33,7 +35,10 @@ export default defineConfig({
   vitePlugins: [
     () => ({
       filters: ['.jsx$', '.js$'],
-      vitePlugin: preact()
+      vitePlugin: preact({
+        reactAliasesEnabled: true,
+        prefreshEnabled: false
+      })
     })
   ]
 });

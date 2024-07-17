@@ -2,26 +2,37 @@ import createREGL from 'regl';
 import { mat4 } from 'gl-matrix';
 import { createLineBatch } from './LineBatch';
 import { render } from 'preact';
-import { effect, signal } from '@preact/signals';
+import { computed, effect, signal } from '@preact/signals';
 
 import seedrandom from 'seedrandom';
 
 const canvas = document.getElementById('canvas');
 const uiContainer = document.getElementById('app');
 
-let projectionMatrix, viewMatrix;
-const cameraZPosition = 15; // New variable for camera Z position
 
+const MIN_SEED = 0;
 const MIN_BATCHES = 1;
 const MAX_BATCHES = 127;
 const MIN_GROUPS = 1;
 const MAX_GROUPS = 73;
 
-const seed = signal(0);
+const savedState = parseState(window.location.hash) || {
+    numBatches: 3,
+    numGroups: 17,
+    seed: 0,
+};
+
+const seed = signal(MIN_SEED);
 const random = signal(seedrandom(seed.value.toString()));
 const regl = signal(undefined)
-const numBatches = signal(13);
-const numGroups = signal(3);
+const numBatches = signal(MIN_BATCHES);
+const numGroups = signal(MIN_GROUPS);
+
+const cameraZPosition = signal(15); // New variable for camera Z position
+const aspectRatio = signal(1);
+
+const projectionMatrix = computed(() =>  mat4.perspective([], Math.PI / 6, aspectRatio.value, 0.01, 1000));
+const viewMatrix = computed(() => mat4.lookAt([], [0, 0, cameraZPosition.value], [0, 0, 0], [0, 1, 0]));
 
 effect(() => {
     random.value = seedrandom(seed.value.toString());
@@ -33,8 +44,46 @@ effect(() => {
         }
     })
     upateReglFrameCB(regl.value, numBatches.value, numGroups.value, random.value);
-    updateViewport(regl.value);
+    regl.value.poll();
 })
+
+function resize({innerWidth, innerHeight}) {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    aspectRatio.value = innerWidth / innerHeight;
+}
+
+effect(()=> {
+    aspectRatio.value;
+    regl.value.poll();
+})
+
+window.addEventListener('resize', () => resize(window), false)
+
+resize(window);
+
+function clamp(a, b, v) {
+    if (v < a) return a;
+    if (v > b) return b;
+    return v;
+}
+
+/*
+Parse sketch state from the hash part of the page's address when provided (window.location.hash).
+*/
+function parseState(hash) {
+    try {
+        const savedState = {
+            numBatches: clamp(MIN_BATCHES, MAX_BATCHES, parseInt(hash.substring(0, 2), 10)),
+            numGroups: clamp(MIN_GROUPS, MAX_GROUPS, parseInt(hash.substring(2, 4), 10)),
+            seed: clamp(MIN_SEED, Number.MAX_SAFE_INTEGER, parseInt(hash.substring(4), 10)),
+        }
+        return savedState;
+    } catch (e) {
+        return undefined;
+    }
+    // hash should exist and be linger than 5 characters.
+}
 
 
 function upateReglFrameCB(regl, numBatches, numGroups, random) {
@@ -49,38 +98,33 @@ function upateReglFrameCB(regl, numBatches, numGroups, random) {
         const currentTime = (Date.now() - startTime) / 1000; // Convert to seconds
 
         const uniforms = {
-            view: viewMatrix,
-            projection: projectionMatrix,
+            view: viewMatrix.value,
+            projection: projectionMatrix.value,
             time: currentTime
         };
 
         lineBatches.forEach(batch => batch.draw(uniforms));
     });
+    regl.poll();
 }
 
 
 export function init() {
-    window.addEventListener('resize', () => updateViewport(regl.value), false);
-    updateViewport(regl.value);
     const App = <div>
         <label>Lines</label>
         <group> <label>Batches</label>
-        <input type='number' value={numBatches.value} min={MIN_BATCHES} max={MAX_BATCHES} onChange={(e) => { numBatches.value = parseInt(e.currentTarget.value, 10) }} />
-        <label>Groups</label>
-        <input type='number' value={numGroups.value} min={MIN_GROUPS} max={MAX_GROUPS} onChange={(e) => { numGroups.value = parseInt(e.currentTarget.value, 10) }} />
+            <input type='number' value={numBatches.value} min={MIN_BATCHES} max={MAX_BATCHES} onChange={(e) => { numBatches.value = parseInt(e.currentTarget.value, 10) }} />
+            <label>Groups</label>
+            <input type='number' value={numGroups.value} min={MIN_GROUPS} max={MAX_GROUPS} onChange={(e) => { numGroups.value = parseInt(e.currentTarget.value, 10) }} />
         </group>
         <label>Random Seed</label>
-       <input type='number' value={seed.value} min={0} onChange={(e) => { seed.value = parseInt(e.currentTarget.value, 10) }} />
+        <input type='number' value={seed.value} min={MIN_SEED} onChange={(e) => { seed.value = parseInt(e.currentTarget.value, 10) }} />
 
     </div>;
     render(App, uiContainer);
 }
 
 function updateViewport(regl) {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    projectionMatrix = mat4.perspective([], Math.PI / 6, window.innerWidth / window.innerHeight, 0.01, 1000);
-    viewMatrix = mat4.lookAt([], [0, 0, cameraZPosition], [0, 0, 0], [0, 1, 0]);
     regl.poll();
 }
 
