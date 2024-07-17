@@ -1,48 +1,14 @@
 import createREGL from 'regl';
 import { mat4 } from 'gl-matrix';
 import { createLineBatch } from './LineBatch';
-import van from "vanjs-core";
+import { render } from 'preact';
+import { signal } from '@preact/signals';
 
 import seedrandom from 'seedrandom';
 const random = seedrandom(Math.random().toString());
 
-const { div, label, input, button } = van.tags;
-
 const canvas = document.getElementById('canvas');
-const uiContainer = document.createElement('div');
-uiContainer.id = 'ui-container';
-document.body.appendChild(uiContainer);
-
-const numBatches = van.state(15);
-const numGroups = van.state(3);
-
-const UI = () => div(
-  label("Number of Batches: "),
-  input({
-    type: "number",
-    value: numBatches.val,
-    oninput: (e) => {
-      numBatches.val = parseInt(e.target.value);
-      reinitialize();
-    },
-    min: 1,
-    max: 100
-  }),
-  div(),
-  label("Number of Groups: "),
-  input({
-    type: "number",
-    value: numGroups.val,
-    oninput: (e) => {
-      numGroups.val = parseInt(e.target.value);
-      reinitialize();
-    },
-    min: 1,
-    max: 10
-  })
-);
-
-van.add(uiContainer, UI);
+const uiContainer = document.getElementById('app');
 
 const regl = createREGL({ 
     canvas: canvas,
@@ -54,17 +20,27 @@ const regl = createREGL({
 let projectionMatrix, viewMatrix;
 let cameraZPosition = 15; // New variable for camera Z position
 
-let lineBatches;
-let startTime;
 
-function init() {
-    updateViewport();
-    lineBatches = createLineBatches(regl, numBatches.val, numGroups.val);
+const state = signal({
+    numBatches: 5,
+    numGroups: 3,
+})
 
-    window.addEventListener('resize', onWindowResize, false);
+const MIN_BATCHES = 1;
+const MAX_BATCHES = 23;
+const MIN_GROUPS = 1;
+const MAX_GROUPS = 7;
 
-    startTime = Date.now();
+function randomizeLines(state) {
+    state.value = {
+        numBatches: Math.floor(random() * (MAX_BATCHES - MIN_BATCHES)) + MIN_BATCHES,
+        numGroups: Math.floor(random() * (MAX_GROUPS - MIN_GROUPS)) + MIN_GROUPS,
+    }
+}
 
+function upateReglFrameCB({numBatches, numGroups}) {
+    const lineBatches = createLineBatches(regl, numBatches, numGroups);
+    const startTime = Date.now();
     regl.frame(() => {
         regl.clear({
             color: [0, 0, 0, 1],
@@ -83,6 +59,21 @@ function init() {
     });
 }
 
+
+export function init() {
+    window.addEventListener('resize', () => updateViewport(), false);
+    updateViewport();
+    // window.addEventListener('click', () => upateReglFrameCB(), false);
+    randomizeLines(state);
+    upateReglFrameCB(state.value)
+
+    const App = <div>
+        <input type='number' min={1} max={23} onChange={() => null}/>
+        <input type='number' min={1} max={7} onChange={() => null}/>
+        </div>;
+    render(App, uiContainer);
+}
+
 function updateViewport() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -93,10 +84,6 @@ function updateViewport() {
 
 function createLineBatches(regl, num_batches, groupsNum) {
     const batchConfigs = [];
-
-    // Create a grid to help distribute batches more evenly
-    const gridSize = Math.ceil(Math.sqrt(num_batches));
-    const cellSize = 2 / gridSize;
 
     // Create groups with random pivot points
     const groups = [];
@@ -160,14 +147,3 @@ function createLineBatches(regl, num_batches, groupsNum) {
         )
     );
 }
-
-function onWindowResize() {
-    updateViewport();
-}
-
-function reinitialize() {
-    lineBatches = createLineBatches(regl, numBatches.val, numGroups.val);
-    startTime = Date.now();
-}
-
-init();

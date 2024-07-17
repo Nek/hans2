@@ -1,4 +1,5 @@
 import { defineConfig } from "@farmfe/core";
+import preact from "@preact/preset-vite";
 
 export default defineConfig({
   // Options related to the compilation
@@ -16,6 +17,10 @@ export default defineConfig({
   server: {
     port: 9000,
   },
-  // Additional plugins
-  plugins: [],
+  vitePlugins: [
+    () => ({
+      filters: ['.jsx$', '.js$'],
+      vitePlugin: preact()
+    })
+  ]
 });
