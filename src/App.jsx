@@ -16,13 +16,15 @@ const MAX_BATCHES = 127;
 const MIN_GROUPS = 1;
 const MAX_GROUPS = 73;
 
+console.log(window.location.hash)
 const savedState = parseState(window.location.hash) || {
-    numBatches: 3,
-    numGroups: 17,
     seed: 0,
+    numBatches: 17,
+    numGroups: 3,
 };
 
-const seed = signal(MIN_SEED);
+console.log(savedState)
+
 
 let regl = (createREGL({
     canvas,
@@ -42,9 +44,10 @@ function resetRegl() {
     })
 }
 
+const seed = signal(savedState.seed);
 
-const numBatches = signal(MIN_BATCHES);
-const numGroups = signal(MIN_GROUPS);
+const numBatches = signal(savedState.numBatches);
+const numGroups = signal(savedState.numGroups);
 
 const cameraZPosition = signal(15); // New variable for camera Z position
 const aspectRatio = signal(1);
@@ -52,6 +55,9 @@ const aspectRatio = signal(1);
 const projectionMatrix = computed(() => mat4.perspective([], Math.PI / 6, aspectRatio.value, 0.01, 1000));
 const viewMatrix = computed(() => mat4.lookAt([], [0, 0, cameraZPosition.value], [0, 0, 0], [0, 1, 0]));
 
+effect(()=>{
+    window.history.pushState(false, false, `#${numBatches.value.toString().padStart(MAX_BATCHES.toString().length, "0")}${numGroups.value.toString().padStart(MAX_GROUPS.toString().length, "0")}${seed.value.toString()}`)
+})
 
 effect(() => {
     resetRegl();
@@ -86,17 +92,16 @@ function clamp(a, b, v) {
 Parse sketch state from the hash part of the page's address when provided (window.location.hash).
 */
 function parseState(hash) {
-    try {
-        const savedState = {
-            numBatches: clamp(MIN_BATCHES, MAX_BATCHES, parseInt(hash.substring(0, 2), 10)),
-            numGroups: clamp(MIN_GROUPS, MAX_GROUPS, parseInt(hash.substring(2, 4), 10)),
-            seed: clamp(MIN_SEED, Number.MAX_SAFE_INTEGER, parseInt(hash.substring(4), 10)),
+    const savedState = {
+            numBatches: clamp(MIN_BATCHES, MAX_BATCHES, parseInt(hash.substring(1, 1 + MAX_BATCHES.toString().length), 10)),
+            numGroups: clamp(MIN_GROUPS, MAX_GROUPS, parseInt(hash.substring(1 + MAX_BATCHES.toString().length, 1 + MAX_BATCHES.toString().length + MAX_GROUPS.toString().length), 10)),
+            seed: clamp(MIN_SEED, Number.MAX_SAFE_INTEGER, parseInt(hash.substring(1 + MAX_BATCHES.toString().length + MAX_GROUPS.toString().length), 10)),
         }
-        return savedState;
-    } catch (e) {
+    if (Object.values(savedState).some( v => Number.isNaN(v))) {
         return undefined;
+    } else {
+        return savedState;
     }
-    // hash should exist and be linger than 5 characters.
 }
 
 
