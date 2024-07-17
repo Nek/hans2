@@ -10,7 +10,12 @@ const canvas = document.getElementById('canvas');
 const uiContainer = document.getElementById('app');
 
 let projectionMatrix, viewMatrix;
-let cameraZPosition = 15; // New variable for camera Z position
+const cameraZPosition = 15; // New variable for camera Z position
+
+const MIN_BATCHES = 1;
+const MAX_BATCHES = 23;
+const MIN_GROUPS = 1;
+const MAX_GROUPS = 7;
 
 const seed = signal(0);
 const random = signal(seedrandom(seed.value.toString()));
@@ -31,10 +36,6 @@ effect(() => {
     updateViewport(regl.value);
 })
 
-const MIN_BATCHES = 1;
-const MAX_BATCHES = 23;
-const MIN_GROUPS = 1;
-const MAX_GROUPS = 7;
 
 function upateReglFrameCB(regl, numBatches, numGroups, random) {
     const lineBatches = createLineBatches(regl, numBatches, numGroups, random);
