@@ -8,6 +8,15 @@ export default defineConfig({
   ],
   // Options related to the compilation
   compilation: {
+    sourcemap: false,
+    partialBundling: {
+      enforceResources: [
+        {
+          name: 'index',
+          test: ['.+'],
+        }
+      ]
+    },
     input: {
       // can be a relative path or an absolute path
       index: "./index.html",
