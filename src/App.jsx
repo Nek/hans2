@@ -15,7 +15,7 @@ const cameraZPosition = 15; // New variable for camera Z position
 const MIN_BATCHES = 1;
 const MAX_BATCHES = 127;
 const MIN_GROUPS = 1;
-const MAX_GROUPS = 13;
+const MAX_GROUPS = 73;
 
 const seed = signal(0);
 const random = signal(seedrandom(seed.value.toString()));
