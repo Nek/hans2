@@ -17,13 +17,16 @@ const regl = createREGL({
 let projectionMatrix, viewMatrix;
 let cameraZPosition = 15; // New variable for camera Z position
 
+let lineBatches;
+let startTime;
+
 function init() {
     updateViewport();
-    const lineBatches = createLineBatches(regl, 15, 3); // Create 5 groups of batches
+    lineBatches = createLineBatches(regl, numBatches.val, numGroups.val);
 
     window.addEventListener('resize', onWindowResize, false);
 
-    let startTime = Date.now();
+    startTime = Date.now();
 
     regl.frame(() => {
         regl.clear({
@@ -123,6 +126,11 @@ function createLineBatches(regl, num_batches, groupsNum) {
 
 function onWindowResize() {
     updateViewport();
+}
+
+function reinitialize() {
+    lineBatches = createLineBatches(regl, numBatches.val, numGroups.val);
+    startTime = Date.now();
 }
 
 init();
