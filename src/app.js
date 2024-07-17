@@ -6,7 +6,7 @@ import van from "vanjs-core";
 import seedrandom from 'seedrandom';
 const random = seedrandom(Math.random().toString());
 
-const { div, label, input } = van.tags;
+const { div, label, input, button } = van.tags;
 
 const canvas = document.getElementById('canvas');
 const uiContainer = document.createElement('div');
