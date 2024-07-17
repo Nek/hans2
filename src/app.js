@@ -6,7 +6,44 @@ import van from "vanjs-core";
 import seedrandom from 'seedrandom';
 const random = seedrandom(Math.random().toString());
 
+const { div, label, input } = van.tags;
+
 const canvas = document.getElementById('canvas');
+const uiContainer = document.createElement('div');
+uiContainer.id = 'ui-container';
+document.body.appendChild(uiContainer);
+
+const numBatches = van.state(15);
+const numGroups = van.state(3);
+
+const UI = () => div(
+  label("Number of Batches: "),
+  input({
+    type: "number",
+    value: numBatches.val,
+    oninput: (e) => {
+      numBatches.val = parseInt(e.target.value);
+      reinitialize();
+    },
+    min: 1,
+    max: 100
+  }),
+  div(),
+  label("Number of Groups: "),
+  input({
+    type: "number",
+    value: numGroups.val,
+    oninput: (e) => {
+      numGroups.val = parseInt(e.target.value);
+      reinitialize();
+    },
+    min: 1,
+    max: 10
+  })
+);
+
+van.add(uiContainer, UI);
+
 const regl = createREGL({ 
     canvas: canvas,
     attributes: {
