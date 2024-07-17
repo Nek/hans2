@@ -9,7 +9,6 @@ import seedrandom from 'seedrandom';
 const canvas = document.getElementById('canvas');
 const uiContainer = document.getElementById('app');
 
-
 const MIN_SEED = 0;
 const MIN_BATCHES = 1;
 const MAX_BATCHES = 127;
@@ -22,9 +21,6 @@ const savedState = parseState(window.location.hash) || {
     numBatches: 17,
     numGroups: 3,
 };
-
-console.log(savedState)
-
 
 let regl = (createREGL({
     canvas,
@@ -50,7 +46,13 @@ const numBatches = signal(savedState.numBatches);
 const numGroups = signal(savedState.numGroups);
 
 const cameraZPosition = signal(15); // New variable for camera Z position
-const aspectRatio = signal(1);
+
+function calculateAspectRatio() {
+    const ratio = innerWidth / innerHeight;
+    return ratio;
+}
+
+const aspectRatio = signal(calculateAspectRatio());
 
 const projectionMatrix = computed(() => mat4.perspective([], Math.PI / 6, aspectRatio.value, 0.01, 1000));
 const viewMatrix = computed(() => mat4.lookAt([], [0, 0, cameraZPosition.value], [0, 0, 0], [0, 1, 0]));
@@ -68,7 +70,7 @@ effect(() => {
 function resize({ innerWidth, innerHeight }) {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
-    aspectRatio.value = innerWidth / innerHeight;
+    aspectRatio.value = calculateAspectRatio();
 }
 
 effect(() => {
