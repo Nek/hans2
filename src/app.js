@@ -14,13 +14,12 @@ const regl = createREGL({
         samples: 4  // This enables 2x MSAA (4 samples)
     }
 });
-let lineBatches = [];
 let projectionMatrix, viewMatrix;
 let cameraZPosition = 15; // New variable for camera Z position
 
 function init() {
     updateViewport();
-    createLineBatches(regl, 15, 3); // Create 5 groups of batches
+    const lineBatches = createLineBatches(regl, 15, 3); // Create 5 groups of batches
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -107,8 +106,8 @@ function createLineBatches(regl, num_batches, groupsNum) {
         }
     }
 
-    batchConfigs.forEach((config) => {
-        const batch = createLineBatch(
+    return batchConfigs.map((config) => 
+        createLineBatch(
             regl,
             config.position,
             config.rotation,
@@ -118,10 +117,8 @@ function createLineBatches(regl, num_batches, groupsNum) {
             config.transparencyRange,
             config.useBurnOverlay,
             config.useDivideOverlay
-        );
-
-        lineBatches.push(batch);
-    });
+        )
+    );
 }
 
 function onWindowResize() {
