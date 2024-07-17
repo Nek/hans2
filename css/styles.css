@@ -3,6 +3,8 @@ body, html {
     padding: 0;
     overflow: hidden;
     background-color: black;
+    height: 100vh;
+    touch-action: none;
 }
 
 canvas {
