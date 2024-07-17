@@ -1,7 +1,11 @@
 import { defineConfig } from "@farmfe/core";
 import preact from "@preact/preset-vite";
+import react from '@farmfe/plugin-react'
 
 export default defineConfig({
+  plugins: [
+    react({ runtime: 'automatic', refresh: true})
+  ],
   // Options related to the compilation
   compilation: {
     input: {
