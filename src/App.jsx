@@ -2,28 +2,33 @@ import createREGL from 'regl';
 import { mat4 } from 'gl-matrix';
 import { createLineBatch } from './LineBatch';
 import { render } from 'preact';
-import { signal } from '@preact/signals';
+import { effect, signal } from '@preact/signals';
 
 import seedrandom from 'seedrandom';
-const random = seedrandom(Math.random().toString());
 
 const canvas = document.getElementById('canvas');
 const uiContainer = document.getElementById('app');
 
-const regl = createREGL({ 
-    canvas: canvas,
-    attributes: {
-        antialias: true,
-        samples: 4  // This enables 2x MSAA (4 samples)
-    }
-});
 let projectionMatrix, viewMatrix;
 let cameraZPosition = 15; // New variable for camera Z position
 
+const seed = signal(0);
+const random = signal(seedrandom(seed.value.toString()));
+const regl = signal(undefined)
+const numBatches = signal(13);
+const numGroups = signal(3);
 
-const state = signal({
-    numBatches: 5,
-    numGroups: 3,
+effect(() => {
+    random.value = seedrandom(seed.value.toString());
+    regl.value = createREGL({
+        canvas: canvas,
+        attributes: {
+            antialias: true,
+            samples: 4  // This enables 2x MSAA (4 samples)
+        }
+    })
+    upateReglFrameCB(regl.value, numBatches.value, numGroups.value, random.value);
+    updateViewport(regl.value);
 })
 
 const MIN_BATCHES = 1;
@@ -31,15 +36,8 @@ const MAX_BATCHES = 23;
 const MIN_GROUPS = 1;
 const MAX_GROUPS = 7;
 
-function randomizeLines(state) {
-    state.value = {
-        numBatches: Math.floor(random() * (MAX_BATCHES - MIN_BATCHES)) + MIN_BATCHES,
-        numGroups: Math.floor(random() * (MAX_GROUPS - MIN_GROUPS)) + MIN_GROUPS,
-    }
-}
-
-function upateReglFrameCB({numBatches, numGroups}) {
-    const lineBatches = createLineBatches(regl, numBatches, numGroups);
+function upateReglFrameCB(regl, numBatches, numGroups, random) {
+    const lineBatches = createLineBatches(regl, numBatches, numGroups, random);
     const startTime = Date.now();
     regl.frame(() => {
         regl.clear({
@@ -61,20 +59,23 @@ function upateReglFrameCB({numBatches, numGroups}) {
 
 
 export function init() {
-    window.addEventListener('resize', () => updateViewport(), false);
-    updateViewport();
-    // window.addEventListener('click', () => upateReglFrameCB(), false);
-    randomizeLines(state);
-    upateReglFrameCB(state.value)
-
+    window.addEventListener('resize', () => updateViewport(regl.value), false);
+    updateViewport(regl.value);
     const App = <div>
-        <input type='number' min={1} max={23} onChange={() => null}/>
-        <input type='number' min={1} max={7} onChange={() => null}/>
-        </div>;
+        <label>Lines</label>
+        <group> <label>Batches</label>
+        <input type='number' value={numBatches.value} min={MIN_BATCHES} max={MAX_BATCHES} onChange={(e) => { numBatches.value = parseInt(e.currentTarget.value, 10) }} />
+        <label>Groups</label>
+        <input type='number' value={numGroups.value} min={MIN_GROUPS} max={MAX_GROUPS} onChange={(e) => { numGroups.value = parseInt(e.currentTarget.value, 10) }} />
+        </group>
+        <label>Random Seed</label>
+       <input type='number' value={seed.value} min={0} onChange={(e) => { seed.value = parseInt(e.currentTarget.value, 10) }} />
+
+    </div>;
     render(App, uiContainer);
 }
 
-function updateViewport() {
+function updateViewport(regl) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     projectionMatrix = mat4.perspective([], Math.PI / 6, window.innerWidth / window.innerHeight, 0.01, 1000);
@@ -82,7 +83,7 @@ function updateViewport() {
     regl.poll();
 }
 
-function createLineBatches(regl, num_batches, groupsNum) {
+function createLineBatches(regl, numBatches, groupsNum, random) {
     const batchConfigs = [];
 
     // Create groups with random pivot points
@@ -95,8 +96,8 @@ function createLineBatches(regl, num_batches, groupsNum) {
         });
     }
 
-    const batchesPerGroup = Math.floor(num_batches / groupsNum);
-    const remainingBatches = num_batches % groupsNum;
+    const batchesPerGroup = Math.floor(numBatches / groupsNum);
+    const remainingBatches = numBatches % groupsNum;
 
     for (let groupIndex = 0; groupIndex < groupsNum; groupIndex++) {
         const batchesInThisGroup = batchesPerGroup + (groupIndex < remainingBatches ? 1 : 0);
@@ -133,7 +134,7 @@ function createLineBatches(regl, num_batches, groupsNum) {
         }
     }
 
-    return batchConfigs.map((config) => 
+    return batchConfigs.map((config) =>
         createLineBatch(
             regl,
             config.position,
