@@ -1,6 +1,7 @@
 import createREGL from 'regl';
 import { mat4 } from 'gl-matrix';
 import { createLineBatch } from './LineBatch';
+import van from "vanjs-core";
 
 import seedrandom from 'seedrandom';
 const random = seedrandom(Math.random().toString());
