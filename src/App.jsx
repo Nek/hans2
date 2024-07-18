@@ -205,7 +205,8 @@ function createLineBatches(regl, numBatches, groupsNum, random) {
             config.widthVariation,
             config.transparencyRange,
             config.useBurnOverlay,
-            config.useDivideOverlay
+            config.useDivideOverlay,
+            random() * 2 + 0.5 // Random animation speed between 0.5 and 2.5
         )
     );
 }

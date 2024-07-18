@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix';
 
 const glsl = v => v
 
-export function createLineBatch(regl, planePosition, rotationMatrix, color, lengthVariation, widthVariation, transparencyRange, useSepia = true, useBurnOverlay = true, useDivideOverlay = false) {
+export function createLineBatch(regl, planePosition, rotationMatrix, color, lengthVariation, widthVariation, transparencyRange, useSepia = true, useBurnOverlay = true, useDivideOverlay = false, animationSpeed = 1.0) {
     const quadVertices = [
         -1, -1,
         1, -1,
@@ -23,6 +23,7 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             uniform bool useBurnOverlay;
             uniform bool useDivideOverlay;
             uniform float time;
+            uniform float animationSpeed;
             varying vec2 vUv;
 
             float rand(vec2 co) {
@@ -54,6 +55,10 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
                 float phaseOffset = (cycleTime * 0.025005 + lineIndex * 0.004995) * 2.0; // 2 times slower
                 float sine = sin((vUv.y + phaseOffset) * 3.14159 * 2.0);
                 float line = smoothstep(0.0, 0.1, abs(sine)); // Adjusted for sharper lines
+
+                // New animation along the lines
+                float alongLineAnim = sin((vUv.x - time * animationSpeed * 0.1) * 3.14159 * 4.0) * 0.5 + 0.5;
+                line *= alongLineAnim;
 
                 float fade = sin(vUv.x * 3.14159); // Keep fade based on vUv.x for horizontal fading
                 
@@ -97,7 +102,8 @@ export function createLineBatch(regl, planePosition, rotationMatrix, color, leng
             },
             view: regl.prop('view'),
             projection: regl.prop('projection'),
-            time: regl.prop('time')
+            time: regl.prop('time'),
+            animationSpeed: () => animationSpeed
         },
         count: 4,
         primitive: 'triangle fan',
