@@ -63,3 +63,38 @@ a {
     margin-right: 14px;
     outline: 14px solid black;
 }
+
+@media (max-width: 1400px) {
+    .layout {
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        flex-direction: column-reverse;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .description {
+        width: 100%;
+        height: auto;
+        margin: 14px 0;
+        padding: 14px;
+        box-sizing: border-box;
+    }
+
+    p,
+    .large-link {
+        font-size: 36px;
+        line-height: 40px;
+    }
+
+    a {
+        font-size: 18px;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
