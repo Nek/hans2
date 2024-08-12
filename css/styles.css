@@ -2,16 +2,13 @@ body,
 html {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow-x: hidden;
     background-color: black;
-    /* height: 100vh; */
     touch-action: none;
     width: 100%;
 }
 
 canvas {
-    /* display: block; */
-    /* margin: auto; */
     position: absolute;
 }
 
@@ -64,37 +61,45 @@ a {
     outline: 14px solid black;
 }
 
+@media (max-width: 700px) {
+    img {
+        width: 100vw;
+    }
+}
+
 @media (max-width: 1400px) {
+    p,
+    .large-link {
+        color: whitesmoke;
+        line-height: 30px;
+        font-size: 28px;
+        margin: 0;
+        margin-bottom: 14px;
+        padding: 0;
+        text-decoration: none;
+        text-decoration-style: none;
+    }
+
+    a {
+        font-size: 11px;
+        color: white;
+        text-decoration: underline;
+        text-decoration-style: dotted;
+    }
     .layout {
+        position: relative;
         left: 0;
         top: 0;
-        width: 100%;
-        height: 100%;
         flex-direction: column-reverse;
         justify-content: center;
         align-items: center;
     }
 
     .description {
-        width: 100%;
-        height: auto;
+        width: 672px;
+        height: 672px;
         margin: 14px 0;
         padding: 14px;
         box-sizing: border-box;
-    }
-
-    p,
-    .large-link {
-        font-size: 36px;
-        line-height: 40px;
-    }
-
-    a {
-        font-size: 18px;
-    }
-
-    img {
-        max-width: 100%;
-        height: auto;
     }
 }
