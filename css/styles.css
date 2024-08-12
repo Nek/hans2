@@ -22,14 +22,11 @@ canvas {
     font-style: normal;
 }
 
-#app {
+.layout {
     position: absolute;
     left: calc(50% - 700px);
     top: calc(50% - 350px);
     color: white;
-}
-
-.layout {
     display: flex;
     flex-direction: row;
     margin: auto;

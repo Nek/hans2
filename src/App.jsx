@@ -15,7 +15,6 @@ const MAX_BATCHES = 127;
 const MIN_GROUPS = 1;
 const MAX_GROUPS = 73;
 
-// const savedState = parseState(window.location.hash) || {
 const savedState = {
   seed: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
   numBatches: 15,
@@ -103,45 +102,6 @@ function clamp(a, b, v) {
   return v;
 }
 
-/*
-Parse sketch state from the hash part of the page's address when provided (window.location.hash).
-*/
-function parseState(hash) {
-  const savedState = {
-    numBatches: clamp(
-      MIN_BATCHES,
-      MAX_BATCHES,
-      parseInt(hash.substring(1, 1 + MAX_BATCHES.toString().length), 10),
-    ),
-    numGroups: clamp(
-      MIN_GROUPS,
-      MAX_GROUPS,
-      parseInt(
-        hash.substring(
-          1 + MAX_BATCHES.toString().length,
-          1 + MAX_BATCHES.toString().length + MAX_GROUPS.toString().length,
-        ),
-        10,
-      ),
-    ),
-    seed: clamp(
-      MIN_SEED,
-      Number.MAX_SAFE_INTEGER,
-      parseInt(
-        hash.substring(
-          1 + MAX_BATCHES.toString().length + MAX_GROUPS.toString().length,
-        ),
-        10,
-      ),
-    ),
-  };
-  if (Object.values(savedState).some((v) => Number.isNaN(v))) {
-    return undefined;
-  } else {
-    return savedState;
-  }
-}
-
 function setReglFrame(
   regl = regl.value,
   numBatches = numBatches.value,
@@ -170,98 +130,7 @@ function setReglFrame(
   });
 }
 
-export function init() {
-  const inputContainerStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "10px",
-    width: "300px", // Adjust this value as needed
-  };
-
-  const labelStyle = {
-    flexBasis: "50%",
-    textAlign: "left",
-  };
-
-  const inputStyle = {
-    width: "150px",
-  };
-
-  const controls = (
-    <div>
-      <div style={inputContainerStyle}>
-        <label style={labelStyle}>Batches</label>
-        <input
-          type="number"
-          value={numBatches.value}
-          min={MIN_BATCHES}
-          max={MAX_BATCHES}
-          onChange={(e) => {
-            numBatches.value = parseInt(e.currentTarget.value, 10);
-          }}
-          style={inputStyle}
-        />
-      </div>
-      <div style={inputContainerStyle}>
-        <label style={labelStyle}>Groups</label>
-        <input
-          type="number"
-          value={numGroups.value}
-          min={MIN_GROUPS}
-          max={MAX_GROUPS}
-          onChange={(e) => {
-            numGroups.value = parseInt(e.currentTarget.value, 10);
-          }}
-          style={inputStyle}
-        />
-      </div>
-      <div style={inputContainerStyle}>
-        <label style={labelStyle}>Random Seed</label>
-        <input
-          type="number"
-          value={seed.value}
-          min={MIN_SEED}
-          onChange={(e) => {
-            seed.value = parseInt(e.currentTarget.value, 10);
-          }}
-          style={inputStyle}
-        />
-      </div>
-    </div>
-  );
-
-  const layout = (
-    <div className="layout">
-      <div>
-        <img src={coverUrl} />
-      </div>
-      <div className="description description-text">
-        <p>
-          Album release
-          <br />
-          “A Strange New Pain.”
-          <br />
-          September 1, 2024.
-        </p>
-        <p className="no-decoration">
-          <a
-            className="large-link"
-            href="https://www.facebook.com/share/rspoaZLpSyg6fqQS/"
-          >
-            Live gig September 28
-          </a>
-        </p>
-        <a href="https://www.facebook.com/share/rspoaZLpSyg6fqQS/">
-          https://www.facebook.com/share/rspoaZLpSyg6fqQS/
-        </a>
-      </div>
-    </div>
-  );
-
-  const App = layout;
-  render(App, uiContainer);
-}
+export function init() {}
 
 function createLineBatches(regl, numBatches, groupsNum, random) {
   const batchConfigs = [];
