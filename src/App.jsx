@@ -170,8 +170,6 @@ function setReglFrame(
   });
 }
 
-import coverUrl from "./assets/cover.jpeg"; // return the url of this image
-
 export function init() {
   const inputContainerStyle = {
     display: "flex",
